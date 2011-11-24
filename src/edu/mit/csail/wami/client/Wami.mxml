@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:mx="library://ns.adobe.com/flex/mx" 
+				minWidth="1" minHeight="1"
+				applicationComplete="applicationCompleteHandler(event)">
+	<!--- 
+	The WAMI recorder is not meant to be seen, except for when the security panel
+	is in view.  There is, however, an interface for the times you want to run it
+	in a debugger.
+	-->
+	<fx:Script>
+		<![CDATA[
+			import edu.mit.csail.wami.utils.External;
+			
+			import mx.controls.Button;
+			import mx.controls.Label;
+			import mx.core.UITextField;
+			
+			private var settings:FlashSettings;
+			
+			private function applicationCompleteHandler(event:Event):void {
+				trace('WAMI Flash Version 1.0');
+				Security.allowInsecureDomain("*");
+				var params:WamiParams = new WamiParams(LoaderInfo(this.root.loaderInfo).parameters);
+				
+				settings = new FlashSettings(stage);
+				External.addCallback("showSettings", showSettings);
+				External.addCallback("getSettings", getSettings);
+				
+				var audio:WamiAudio = new WamiAudio(params);
+				if (params.visible) 
+				{
+					showDebugInterface(params, audio);
+				}
+				External.call(params.loadedCallback);
+			}
+			
+			// Other settings might be passed back this way, but for
+			// now we just have the microphone.
+			internal function getSettings():Object
+			{
+				var json:Object = {
+					"microphone" : {
+						"granted" : hasMicPermissions()
+					}
+				};
+				
+				return json;
+			}
+			
+			internal function showSettings(panel:String,
+										   startedCallback:String = null, 
+										   finishedCallback:String = null,
+										   failedCallback:String = null):void
+			{
+				settings.showSettings(panel, new WamiListener(startedCallback, finishedCallback, failedCallback));
+			}
+			
+			private function hasMicPermissions():Boolean
+			{
+				var mic:Microphone = Microphone.getMicrophone();
+				return (mic != null && !mic.muted);
+			}
+			
+			private function showDebugInterface(params:WamiParams, audio:WamiAudio):void
+			{
+				this.horizontalScrollPolicy = "off";
+				this.verticalScrollPolicy = "off";
+				
+				var label:Label = new Label();
+				var interval:uint;
+				
+				var recordButton:Button = new Button();
+				recordButton.label = "Record";
+				addElement(recordButton);
+				recordButton.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void
+				{
+					audio.startRecording(params.testRecordUrl);
+					label.setStyle("color", "#500000");
+					interval = setInterval(function():void
+					{
+						label.text = "Activity: " + audio.getRecordingActivity();	
+					}, 250);
+				});
+				
+				var stopButton:Button = new Button();
+				stopButton.label = "Stop";
+				addElement(stopButton);
+				stopButton.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void
+				{
+					if (interval) clearInterval(interval);
+					interval = 0;
+					label.text = "";
+					audio.stopRecording();
+					audio.stopPlaying();
+				});
+				
+				var playButton:Button = new Button();
+				playButton.label = "Play";
+				addElement(playButton);
+				playButton.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void
+				{
+					audio.startPlaying(params.testPlayUrl);
+					label.setStyle("color", "#000500");
+					interval = setInterval(function():void
+					{
+						label.text = "Activity: " + audio.getPlayingActivity();	
+					}, 250);
+				});
+				
+				addChild(label);
+			}
+		]]>
+	</fx:Script>
+</mx:Application>
