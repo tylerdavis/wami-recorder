@@ -1,6 +1,3 @@
-<!-- This file defines a Google gadget, but inside, you'll find all the HTML
-     you need to get started with the WAMI recorder. Copy and paste away. -->
-
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
   <ModulePrefs title="Wami Recorder Example" 
@@ -9,6 +6,12 @@
 	       description="A Google gadget to exemplify the simplest wami-recorder use-case." />
   <Content type="html">
     <![CDATA[
+
+
+
+<!-- This file defines a Google gadget, but you'll find all the HTML
+     you need to get started with the WAMI recorder here. Copy and paste away. -->
+
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
   Hello
   <div id="recorder"></div>
@@ -26,6 +29,10 @@
       var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
       swfobject.embedSWF(swfurl, "recorder", 214, 137, '10.0.0', null, flashvars, params); 
   </script>
+
+
+
+
     ]]>
   </Content>
 </Module>​
