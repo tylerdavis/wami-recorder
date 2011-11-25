@@ -3,16 +3,16 @@
 
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-  <ModulePrefs title="Wami Recorder Example" />
+  <ModulePrefs title="Wami Recorder Example" 
+	       author="Ian McGraw"
+	       author_email="wami-toolkit@csail.mit.edu"
+	       description="A Google gadget to exemplify the simplest wami-recorder use-case." />
   <Content type="html">
     <![CDATA[
-
-
-<html>
-<head>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+  Hello
+  <div id="recorder"></div>
   <script type="text/javascript">
-    function setupRecorder() {
       var params = {
         allowScriptAccess: 'always',
         wmode: 'transparent'
@@ -23,16 +23,9 @@
         stream: false
       };
 
-      swfobject.embedSWF("Wami.swf", "recorder", 214, 137, '10.0.0', null, flashvars, params); 
-    } 
+      var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/wami-recorder.xml";
+      swfobject.embedSWF(swfurl, "recorder", 214, 137, '10.0.0', null, flashvars, params); 
   </script>
-</head>
-
-
-<body onload="setupRecorder()">
-<div id="recorder"></div>
-</body>
-</html>
     ]]>
   </Content>
 </Module>​
