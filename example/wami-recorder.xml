@@ -15,19 +15,12 @@
      you need to get started with the WAMI recorder here. Copy and paste away. -->
 
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-  Hello
+Hello!
   <div id="recorder"></div>
   <script type="text/javascript">
       var params = {
-        allowScriptAccess: 'always',
-        wmode: 'transparent'
+        allowScriptAccess: 'always'
       };
-    
-      var flashvars = {
-        visible: true,
-        stream: false
-      };
-
       var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
       swfobject.embedSWF(swfurl, "recorder", 214, 137, '10.0.0', null, flashvars, params); 
   </script>
