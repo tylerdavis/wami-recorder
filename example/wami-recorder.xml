@@ -1,3 +1,13 @@
+<!-- This file defines a Google gadget, but inside, you'll find all the HTML
+     you need to get started with the WAMI recorder. Copy and paste away. -->
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="Wami Recorder Example" />
+  <Content type="html">
+    <![CDATA[
+
+
 <html>
 <head>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
@@ -18,7 +28,11 @@
   </script>
 </head>
 
+
 <body onload="setupRecorder()">
 <div id="recorder"></div>
 </body>
 </html>
+    ]]>
+  </Content>
+</Module>​
