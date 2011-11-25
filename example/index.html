@@ -1,0 +1,18 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+  <script type="text/javascript">
+    function recordSetup() {
+      var params = {
+        allowScriptAccess: 'always'
+      };
+      
+      swfobject.embedSWF("Wami.swf", "recorder", 214, 137, '10.0.0', null, {}, params); 
+    }
+  </script>
+</head>
+<body onload="recordSetup()">
+  <div id="recorder"></div>
+  Hello!
+</body>
+</html>
