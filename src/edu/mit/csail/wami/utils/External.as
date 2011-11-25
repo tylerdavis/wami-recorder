@@ -37,7 +37,14 @@ package edu.mit.csail.wami.utils
 		{
 			if (ExternalInterface.available && functionName) 
 			{
-				ExternalInterface.call(functionName, arguments);
+				try 
+				{
+					ExternalInterface.call(functionName, arguments);
+				}
+				catch (e:Error)
+				{
+					trace("Error calling external function: " + e.message);
+				}
 			}
 			else
 			{	
@@ -49,7 +56,14 @@ package edu.mit.csail.wami.utils
 		{
 			if (ExternalInterface.available && functionName) 
 			{
-				ExternalInterface.addCallback(functionName, closure);
+				try
+				{
+					ExternalInterface.addCallback(functionName, closure);
+				}
+				catch (e:Error)
+				{
+					trace("Error calling external function: " + e.message);
+				}
 			}
 			else
 			{
