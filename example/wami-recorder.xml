@@ -11,7 +11,7 @@
 <div id="flashcontainer" style="text-align: center;"></div> 
 
 <script type="text/javascript">
-  var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
+  var swfurl = "https://wami-recorder.googlecode.com/hg/example/Wami.swf";
   gadgets.flash.embedFlash(swfurl, "flashcontainer", {
   swf_version: 6,
   id: "flashid",
