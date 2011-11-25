@@ -3,7 +3,9 @@
   <ModulePrefs title="Wami Recorder Example" 
 	       author="Ian McGraw"
 	       author_email="wami-toolkit@csail.mit.edu"
-	       description="A Google gadget to exemplify the simplest wami-recorder use-case." />
+	       description="A Google gadget to exemplify the simplest wami-recorder use-case.">
+    <Require feature="flash" />
+  </ModulePrefs>
   <Content type="html">
     <![CDATA[
 
