@@ -1,19 +1,19 @@
 <html>
 <head>
+  <!-- swfobject is a commonly used library to embed Flash content -->
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
-  <script type="text/javascript">
-    function recordSetup() {
-      var params = {
-        allowScriptAccess: 'always'
-      };
-      
-      swfobject.embedSWF("Wami.swf", "recorder", 214, 137, '10.0.0', null, {}, params); 
-    }
-  </script>
+
+  <!-- An example of a customized GUI.  Keep it, or replace it -->
+  <script type="text/javascript" src="gui.js"></script>
+
+  <!-- Exemplifies the interaction between the recorder and a JS GUI -->
+  <script type="text/javascript" src="recorder.js"></script>
 </head>
-<body onload="recordSetup()">
+<body onload="setupRecorder()">
   <div style="position: absolute; left: 250px">
-    <div id="recorder"></div>
+    <div id="recordDiv" style="position: absolute; left: 50px"></div>
+    <div id="playDiv" style="position: absolute; right: 50px"></div>
+    <div id="wamiDiv"></div>
   </div>
 </body>
 </html>
