@@ -50,7 +50,7 @@ package edu.mit.csail.wami.utils
 			{	
 				trace("WamiUtils.call: " + functionName + "(" + arguments + ")");
 			}
-		}
+		}	
 		
 		public static function addCallback(functionName:String, closure:Function):void
 		{
