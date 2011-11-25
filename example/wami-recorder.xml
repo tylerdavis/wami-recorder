@@ -12,7 +12,7 @@
 
 <script type="text/javascript">
   var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
-  gadgets.flash.embedFlash(url, "flashcontainer", {
+  gadgets.flash.embedFlash(swfurl, "flashcontainer", {
   swf_version: 6,
   id: "flashid",
   width: 300,
