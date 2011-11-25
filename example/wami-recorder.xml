@@ -23,7 +23,7 @@
         stream: false
       };
 
-      var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/wami-recorder.xml";
+      var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
       swfobject.embedSWF(swfurl, "recorder", 214, 137, '10.0.0', null, flashvars, params); 
   </script>
     ]]>
