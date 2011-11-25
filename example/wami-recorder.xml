@@ -3,7 +3,8 @@
   <ModulePrefs title="Wami Recorder Example" 
 	       author="Ian McGraw"
 	       author_email="wami-toolkit@csail.mit.edu"
-	       description="A Google gadget to exemplify the simplest wami-recorder use-case.">
+	       description="A Google gadget to exemplify the simplest wami-recorder use-case."
+	       height="214" width="137">
     <Require feature="flash" />
   </ModulePrefs>
   <Content type="html">
@@ -15,8 +16,8 @@
   gadgets.flash.embedFlash(swfurl, "flashcontainer", {
   swf_version: 6,
   id: "flashid",
-  width: 300,
-  height: 250
+  width: 214,
+  height: 137
   })
 </script>
 ]]>
