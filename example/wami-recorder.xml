@@ -1,25 +1,40 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
-<Module> 
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
   <ModulePrefs title="Wami Recorder Example" 
 	       author="Ian McGraw"
 	       author_email="wami-toolkit@csail.mit.edu"
-	       description="A Google gadget to exemplify the simplest wami-recorder use-case."
-	       height="214" width="137">
+	       description="A Google gadget to exemplify the simplest wami-recorder use-case.">
     <Require feature="flash" />
   </ModulePrefs>
   <Content type="html">
     <![CDATA[
-<div id="flashcontainer" style="text-align: center;"></div> 
 
-<script type="text/javascript">
-  var swfurl = "https://wami-recorder.googlecode.com/hg/example/Wami.swf";
-  gadgets.flash.embedFlash(swfurl, "flashcontainer", {
-  swf_version: 6,
-  id: "flashid",
-  width: 214,
-  height: 137
-  })
-</script>
-]]>
-</Content>
+
+
+<!-- This file defines a Google gadget, but you'll find all the HTML
+     you need to get started with the WAMI recorder here. Copy and paste away. -->
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+  Hello
+  <div id="recorder"></div>
+  <script type="text/javascript">
+      var params = {
+        allowScriptAccess: 'always',
+        wmode: 'transparent'
+      };
+    
+      var flashvars = {
+        visible: true,
+        stream: false
+      };
+
+      var swfurl = "https://code.google.com/p/wami-recorder/source/browse/example/Wami.swf";
+      swfobject.embedSWF(swfurl, "recorder", 214, 137, '10.0.0', null, flashvars, params); 
+  </script>
+
+
+
+
+    ]]>
+  </Content>
 </Module>
