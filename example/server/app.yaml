@@ -1,0 +1,14 @@
+application: wami-recorder
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /crossdomain.xml 
+  mime_type: text/xml
+  static_files: crossdomain.xml 
+  upload: crossdomain.xml
+
+- url: .*
+  script: main.py
+
