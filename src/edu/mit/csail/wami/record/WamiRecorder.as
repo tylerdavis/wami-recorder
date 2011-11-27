@@ -26,16 +26,16 @@
 */
 package edu.mit.csail.wami.record
 {
-	import edu.mit.csail.wami.utils.StateListener;
 	import edu.mit.csail.wami.utils.Pipe;
+	import edu.mit.csail.wami.utils.StateListener;
 	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	import flash.events.EventDispatcher;
 	import flash.events.SampleDataEvent;
 	import flash.events.StatusEvent;
 	import flash.media.Microphone;
-	import flash.utils.ByteArray;
 	import flash.media.SoundCodec;
+	import flash.utils.ByteArray;
 	
 	public class WamiRecorder implements IRecorder
 	{
@@ -47,9 +47,9 @@ package edu.mit.csail.wami.record
 		private var audioPipe:Pipe;
 		private var listener:StateListener;
 		
-		public function WamiRecorder(s:Boolean)
+		public function WamiRecorder(format:WaveFormat, s:Boolean)
 		{
-			format = new WaveFormat();
+			this.format = format;
 			stream = s;
 			var bytesPerSample:uint = format.channels * (format.bits/8) * format.rate;
 			chunkSize = stream ? bytesPerSample * CHUNK_DURATION : int.MAX_VALUE;

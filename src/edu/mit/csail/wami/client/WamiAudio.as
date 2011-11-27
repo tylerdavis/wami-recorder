@@ -46,7 +46,7 @@ package edu.mit.csail.wami.client
 
 		function WamiAudio(params:WamiParams)
 		{
-			recorder = new WamiRecorder(params.stream);
+			recorder = new WamiRecorder(params.format, params.stream);
 			player = new WamiPlayer();
 			
 			External.addCallback("startRecording", startRecording);

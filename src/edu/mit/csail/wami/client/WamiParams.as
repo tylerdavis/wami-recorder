@@ -34,6 +34,7 @@ package edu.mit.csail.wami.client
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.utils.getQualifiedClassName;
+	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	/**
 	 * A class documents the possible parameters and sets a few defaults.
@@ -44,20 +45,16 @@ package edu.mit.csail.wami.client
 		// Show the debug interface.
 		public var visible:Boolean = true;
 
-		// Send the audio using multiple HTTP Posts
+		// Send the audio using multiple HTTP Posts.
 		public var stream:Boolean = false;
 		
-		//public var testRecordUrl:String = "http://localhost:8080/portal/record?test=/Users/imcgraw/Desktop/mtest.wav";
-		
+		// The URLs used in the debugging interface.
 		public var testRecordUrl:String = "http://wami-recorder.appspot.com/";
 		public var testPlayUrl:String = "http://wami-recorder.appspot.com/";
-		//public var testRecordUrl:String = "http://localhost:8080/portal/record?wsessionid=test";
-		//public var testPlayUrl:String = "http://localhost:8080/portal/play?wsessionid=test&operation=playback";
-		//public var testRecordUrl:String = "http://people.csail.mit.edu/imcgraw/post/test.php";
-		//public var testPlayUrl:String = "http://people.csail.mit.edu/imcgraw/post/output.wav";
 		
 		// Callbacks for loading the client.
 		public var loadedCallback:String;
+		public var format:WaveFormat;
 	
 		public function WamiParams(params:Object):void
 		{
@@ -72,6 +69,12 @@ package edu.mit.csail.wami.client
 			}
 						
 			loadedCallback = params.loadedCallback;
+			
+			format = new WaveFormat();
+			if (params.rate != undefined) 
+			{
+				format.rate = int(params.rate);
+			}
 		}
 	}
 }

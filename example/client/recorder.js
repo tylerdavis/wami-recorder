@@ -23,7 +23,7 @@ function setupRecorder() {
     
     // This is the minimum size due to the microphone security panel
     swfobject.embedSWF("Wami.swf", "wamiDiv", 214, 137, 
-		       '10.0.0', null, flashVars, params);
+    		       '10.0.0', null, flashVars, params);
 }
 
 function loadedRecorder() {
@@ -47,7 +47,19 @@ function checkSecurity() {
 }
 
 function hideFlash() {
+    // Note that moving the Flash (or using most other hiding
+    // techniques) will reload the Flash.  This will cause the app to
+    // lose Microphone security settings, unless the client clicks
+    // "remember".  Thus we can either force the client to click
+    // remember, or use visibility="hidden".  We've opted for the
+    // latter here, however, doing so requires us to keep the large
+    // 214x137 footprint.
+
     recorder.style.visibility = "hidden";
+
+    // For more details on this browser-bug, see:
+    // http://stackoverflow.com/questions/3963283/can-i-move-a-flash-object-within-the-dom-without-it-reloading
+    // Please share if you find a work-around.
 }
 
 function showFlash() {
@@ -56,6 +68,7 @@ function showFlash() {
 
 function zoomError() {
     // The minimum size for the flash content is 214x137.  Browser's zoomed out too far won't show the panel.
+    // We could play the game of re-embedding the Flash in a larger DIV here, but instead we just warn the user:
     alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
 }
 
@@ -121,7 +134,6 @@ function onRecordFinish() {
 function onPlayStart() {
     playInterval = setInterval(function() {
         var level = recorder.getPlayingActivity();
-	console.log("Here: " + level);
         playButton.setActivity(level);
     }, 200);    
 }
@@ -186,7 +198,6 @@ Wami.Button = function(guiID, type) {
 	if (e.which) rightclick = (e.which == 3);
 	else if (e.button) rightclick = (e.button == 2);
 
-	console.log("click");
 	if (!rightclick) {
 	    if (self.active && self.onstop) {
 		self.active = false;
