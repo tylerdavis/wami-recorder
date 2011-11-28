@@ -13,7 +13,7 @@ var recordInterval, playInterval;
 function setupRecorder() {
     var params = {
         allowScriptAccess: "always",
-	wmode: "transparent"
+        wmode: "transparent"
     };
     
     var flashVars = {
