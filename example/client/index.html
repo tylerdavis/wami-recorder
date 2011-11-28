@@ -5,21 +5,6 @@
 
   <!-- Exemplifies the interaction between the recorder and a custom GUI -->
   <script type="text/javascript" src="recorder.js"></script>
-
-  <!-- Pop-up download Flash page -->
-  <script type="text/javascript">
-  function popup(mylink, name) {
-    if (typeof(mylink) == 'string') {
-      href=mylink;
-    }
-    else {
-      href=mylink.href;
-    }
-
-    window.open(href, name, "width=700,height=600,scrollbars=yes");
-    return false;
-  }
-  </script>
 </head>
 
 <body onload="setupRecorder()">
