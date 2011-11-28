@@ -60,7 +60,7 @@ package edu.mit.csail.wami.record
 		 * few milliseconds of audio.  Often people start talking before they click the
 		 * button, so we prepend paddingMillis milliseconds to the audio.
 		 */
-		public function WamiRecorder(format:WaveFormat, s:Boolean, paddingMillis:uint)
+		public function WamiRecorder(mic:Microphone, format:WaveFormat, s:Boolean, paddingMillis:uint)
 		{
 			this.format = format;
 			stream = s;
@@ -71,7 +71,7 @@ package edu.mit.csail.wami.record
 			this.circularBuffer = new BytePipe(paddingBufferSize);
 			this.paddingMillis = paddingMillis;
 			
-			mic = Microphone.getMicrophone();
+			this.mic = mic;
 			mic.addEventListener(StatusEvent.STATUS, onMicStatus);
 			if (!mic.muted) 
 			{
@@ -85,7 +85,8 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function startListening():void
-		{
+		{			
+			trace("Listening");
 			mic.rate = format.getRecordRate();
 			mic.setSilenceLevel(0, 10000);
 			mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
@@ -93,9 +94,10 @@ package edu.mit.csail.wami.record
 		
 		protected function onMicStatus(event:StatusEvent):void
 		{
+			trace("status: " + event.code);
 			if (event.code == "Microphone.Unmuted") 
 			{
-				startListening();	
+				startListening();
 			}
 		}
 		
