@@ -54,12 +54,12 @@ package edu.mit.csail.wami.record
 		/**
 		 * Does of POST of the data passed in to every call to "write"
 		 */
-		public function MultiPost(url:String, type:String, timeoutMillist:int, listener:StateListener)
+		public function MultiPost(url:String, type:String, timeoutMillis:int, listener:StateListener)
 		{
 			this.url = url;
 			this.contentType = type;
 			this.listener = listener;
-			this.timeoutMillis = timeoutMillist;
+			this.timeoutMillis = timeoutMillis;
 		}
 		
 		override public function write(bytes:ByteArray):void

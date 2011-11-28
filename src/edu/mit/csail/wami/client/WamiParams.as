@@ -45,6 +45,10 @@ package edu.mit.csail.wami.client
 		// Show the debug interface.
 		public var visible:Boolean = true;
 
+		// Append this many milliseconds of audio before 
+		// and after calls to startRecording/stopRecording.
+		public var paddingMillis:uint = 200;
+
 		// Send the audio using multiple HTTP Posts.
 		public var stream:Boolean = false;
 		
@@ -67,13 +71,18 @@ package edu.mit.csail.wami.client
 			{
 				visible = params.visible == "true";
 			}
-						
+			
+			if (params.paddingMillis != undefined) 
+			{
+				paddingMillis = int(params.paddingMillis);
+			}
+			
 			loadedCallback = params.loadedCallback;
 			
 			format = new WaveFormat();
 			if (params.rate != undefined) 
 			{
-				format.rate = int(params.rate);
+				format.rate = uint(params.rate);
 			}
 		}
 	}

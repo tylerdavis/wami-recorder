@@ -30,32 +30,65 @@ package edu.mit.csail.wami.utils
 	import flash.utils.Endian;
 
 	/**
-	 * Accumulates the written bytes into an array.
+	 * Accumulates the written bytes into an array.  If a max number of bytes 
+	 * is specified this will act as a circular buffer. 
 	 */
 	public class BytePipe extends Pipe
 	{
 		private var buffer:ByteArray = new ByteArray();
-		private var closed:Boolean;
+		private var done:Boolean = false;
+		private var maxBytes:uint;
+		private var start:uint = 0;
+		
+		function BytePipe(maxBytes:uint = uint.MAX_VALUE):void 
+		{
+			this.maxBytes = maxBytes;
+		}
 		
 		override public function write(bytes:ByteArray):void
 		{
-			bytes.readBytes(buffer, buffer.length, bytes.bytesAvailable);
+			if (maxBytes <= 0) return;  // no room!
+			
+			var available:uint = Math.min(maxBytes - buffer.length, bytes.bytesAvailable);
+			if (available > 0) 
+			{
+				bytes.readBytes(buffer, buffer.length, available);
+			}
+			
+			while (bytes.bytesAvailable) 
+			{
+				// Read bytes into the circular buffer.
+				available = Math.min(buffer.length - start, bytes.bytesAvailable);
+				bytes.readBytes(buffer, start, available);
+				start = (start + available) % maxBytes;
+			}
+	
+			buffer.position = 0;
 		}
 		
 		override public function close():void
 		{
-			closed = true;
 			super.close();
+			done = true;
 		}
 		
 		public function getByteArray():ByteArray
 		{
-			if (!closed)
+			if (!done)
 			{
-				throw new Error("BytePipe should be closed before accessing byte array.");
+				throw new Error("BytePipe should be done before accessing byte array.");
 			}
+			
+			var array:ByteArray = new ByteArray();
+			buffer.position = start;
+			buffer.readBytes(array);
 			buffer.position = 0;
-			return buffer;
+			if (start > 0) 
+			{
+				buffer.readBytes(array, array.length, start);
+			}
+			array.position = 0;
+			return array;
 		}
 	}
 }

@@ -31,10 +31,8 @@ package edu.mit.csail.wami.client
 	import edu.mit.csail.wami.record.IRecorder;
 	import edu.mit.csail.wami.record.WamiRecorder;
 	import edu.mit.csail.wami.utils.External;
-	import edu.mit.csail.wami.utils.StateListener;
 	
 	import flash.display.MovieClip;
-	import edu.mit.csail.wami.play.TestPlayer;
 
 	public class WamiAudio extends MovieClip
 	{
@@ -46,7 +44,7 @@ package edu.mit.csail.wami.client
 
 		function WamiAudio(params:WamiParams)
 		{
-			recorder = new WamiRecorder(params.format, params.stream);
+			recorder = new WamiRecorder(params.format, params.stream, params.paddingMillis);
 			player = new WamiPlayer();
 			
 			External.addCallback("startRecording", startRecording);

@@ -26,6 +26,7 @@
 */
 package edu.mit.csail.wami.record
 {
+	import edu.mit.csail.wami.utils.BytePipe;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
 	import edu.mit.csail.wami.utils.WaveFormat;
@@ -36,39 +37,86 @@ package edu.mit.csail.wami.record
 	import flash.media.Microphone;
 	import flash.media.SoundCodec;
 	import flash.utils.ByteArray;
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
 	
 	public class WamiRecorder implements IRecorder
 	{
-		private static var CHUNK_DURATION:Number = .25;
+		private static var CHUNK_DURATION_MILLIS:Number = 2000;
+		
 		private var mic:Microphone = null;
 		private var stream:Boolean;
-		private var chunkSize:int;
+		private var chunkSize:uint;
 		private var format:WaveFormat;
 		private var audioPipe:Pipe;
 		private var listener:StateListener;
+		private var circularBuffer:BytePipe;
+		private var paddingMillis:uint;
+		private var stopInterval:uint;
+		private var paddingBufferSize:uint;
 		
-		public function WamiRecorder(format:WaveFormat, s:Boolean)
+		/**
+		 * The WAMI recorder actually listens constantly, keeping a buffer of the last
+		 * few milliseconds of audio.  Often people start talking before they click the
+		 * button, so we prepend paddingMillis milliseconds to the audio.
+		 */
+		public function WamiRecorder(format:WaveFormat, s:Boolean, paddingMillis:uint)
 		{
 			this.format = format;
 			stream = s;
-			var bytesPerSample:uint = format.channels * (format.bits/8) * format.rate;
-			chunkSize = stream ? bytesPerSample * CHUNK_DURATION : int.MAX_VALUE;
+			var bytesPerSecond:uint = format.channels * (format.bits/8) * format.rate;
+			chunkSize = stream ? bytesPerSecond * CHUNK_DURATION_MILLIS / 1000.0 : int.MAX_VALUE;
+			
+			this.paddingBufferSize = uint(bytesPerSecond*paddingMillis/1000.0);
+			this.circularBuffer = new BytePipe(paddingBufferSize);
+			this.paddingMillis = paddingMillis;
+			
+			mic = Microphone.getMicrophone();
+			mic.addEventListener(StatusEvent.STATUS, onMicStatus);
+			if (!mic.muted) 
+			{
+				startListening();
+			}
 			
 			if (chunkSize <= 0)
 			{
-				throw Error("Desired duration is too small, even for streaming chunks: " + chunkSize);
+				throw new Error("Desired duration is too small, even for streaming chunks: " + chunkSize);
+			}
+		}
+		
+		private function startListening():void
+		{
+			mic.rate = format.getRecordRate();
+			mic.setSilenceLevel(0, 10000);
+			mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
+		}
+		
+		protected function onMicStatus(event:StatusEvent):void
+		{
+			if (event.code == "Microphone.Unmuted") 
+			{
+				startListening();	
 			}
 		}
 		
 		public function start(url:String, listener:StateListener):void 
 		{
-			if (mic) return;
+			if (mic.muted)
+			{
+				// Security should have been handled by now from Javascript.
+				// This forces the security dialogue to pop up for debugging.
+				startListening();
+			}
+			
+			reallyStop();
 			audioPipe = createAudioPipe(url);
+
+			// Prepend a small amount of audio we've already recorded.
+			circularBuffer.close();
+			audioPipe.write(circularBuffer.getByteArray());
+			circularBuffer = new BytePipe(paddingBufferSize);
+
 			this.listener = listener;
-			mic = Microphone.getMicrophone();
-			mic.rate = format.getRecordRate();
-			mic.setSilenceLevel(0, 10000);
-			mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 			listener.started();
 		}
 		
@@ -101,7 +149,14 @@ package edu.mit.csail.wami.record
 			evt.data.position = 0;
 			try 
 			{
-				audioPipe.write(evt.data);
+				if (audioPipe)
+				{
+					audioPipe.write(evt.data);
+				}
+				else
+				{
+					circularBuffer.write(evt.data);
+				}
 			}
 			catch (error:Error)
 			{
@@ -111,17 +166,22 @@ package edu.mit.csail.wami.record
 		
 		public function stop():void 
 		{
-			if (!mic) return;
-			mic.removeEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
-			audioPipe.close();
-			mic = null;
-			listener.finished();
+			stopInterval = setInterval(reallyStop, paddingMillis);
 		}
 		
 		public function level():int 
 		{
-			if (!mic) return 0;
+			if (!audioPipe) return 0;
 			return mic.activityLevel;
+		}
+		
+		private function reallyStop():void
+		{
+			clearInterval(stopInterval);
+			if (!audioPipe) return;
+			audioPipe.close();
+			audioPipe = null;
+			listener.finished();
 		}
 	}
 }
