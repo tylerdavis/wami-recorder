@@ -39,6 +39,7 @@ package edu.mit.csail.wami.utils
 			{
 				try 
 				{
+					trace("External.call: " + functionName + "(" + arguments + ")");
 					ExternalInterface.call(functionName, arguments);
 				}
 				catch (e:Error)
@@ -48,7 +49,7 @@ package edu.mit.csail.wami.utils
 			}
 			else
 			{	
-				trace("WamiUtils.call: " + functionName + "(" + arguments + ")");
+				trace("No ExternalInterface - External.call: " + functionName + "(" + arguments + ")");
 			}
 		}	
 		
@@ -58,6 +59,7 @@ package edu.mit.csail.wami.utils
 			{
 				try
 				{
+					trace("External.addCallback: " + functionName);
 					ExternalInterface.addCallback(functionName, closure);
 				}
 				catch (e:Error)
@@ -67,7 +69,7 @@ package edu.mit.csail.wami.utils
 			}
 			else
 			{
-				trace("WamiUtils.addCallback: " + functionName);
+				trace("No ExternalInterface - External.addCallback: " + functionName);
 			}
 		}
 	}
