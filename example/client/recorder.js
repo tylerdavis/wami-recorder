@@ -13,9 +13,12 @@ var wamiID = "wami";
 
 function setupRecorder() {
 	var params = {
-		allowScriptAccess : "always",
-		wmode : "transparent"
+		allowScriptAccess : "always"
 	};
+
+	if (supportsTransparency()) {
+		params.wmode = "transparent";
+	}
 
 	var flashVars = {
 		visible : false,
@@ -27,11 +30,11 @@ function setupRecorder() {
 			+ version + " or greater<br />https://get.adobe.com/flashplayer/";
 
 	// This is the minimum size due to the microphone security panel
-	swfobject.embedSWF("Wami.swf", wamiID, 214, 137, version, null,
-			flashVars, params);
-	
+	swfobject.embedSWF("Wami.swf", wamiID, 214, 137, version, null, flashVars,
+			params);
+
 	// Without this line, Firefox has a dotted outline of the flash
-	swfobject.createCSS("#" + wamiID,"outline:none");
+	swfobject.createCSS("#" + wamiID, "outline:none");
 }
 
 function loadedRecorder() {
@@ -42,6 +45,7 @@ function loadedRecorder() {
 function checkSecurity() {
 	var settings = recorder.getSettings();
 	if (settings.microphone.granted) {
+		hideFlash();
 		setupButtons();
 	} else {
 		// Show any Flash settings panel you want using the string constants
@@ -64,22 +68,23 @@ function zoomError() {
 	alert("Your browser may be zoomed too far out to show the Flash security settings panel.  Zoom in, and refresh.");
 }
 
+function supportsTransparency() {
+	// Detecting the OS is a big no-no in Javascript programming, but
+	// I can't think of a better way to know if wmode is supported or
+	// not... since not supporting it (like Flash on Ubuntu) is a bug.
+	return (navigator.platform.indexOf("Linux") == -1);
+}
+
+function hideFlash() {
+	// Hiding flash correctly in all the browsers is tricky. Please read:
+	// https://code.google.com/p/wami-recorder/wiki/HidingFlash
+
+	if (!supportsTransparency()) {
+		recorder.style.visibility = "hidden";
+	}
+}
+
 function setupButtons() {
-	// Note that moving the Flash (or using most other hiding
-	// techniques) will reload the Flash. This will cause the app to
-	// lose Microphone security settings, unless the client clicks
-	// "remember". Seems like style.visibility="hidden" would solve
-	// the problem, except IE will essentially disable communication
-	// to Flash from Javascript if the visibility is set to "hidden".
-	// The right solution seems to be to leave the Flash in place and
-	// always visible. With wmode:"transparent" it's invisible unless
-	// the security window is up, and you can click through to the
-	// HTML below.
-
-	// For more details on this browser-bug, see:
-	// http://stackoverflow.com/questions/3963283/can-i-move-a-flash-object-within-the-dom-without-it-reloading
-	// Please share if you find a work-around.
-
 	recordButton = new Wami.Button("recordDiv", Wami.Button.RECORD);
 	recordButton.onstart = startRecording;
 	recordButton.onstop = stopRecording;
@@ -242,15 +247,16 @@ Wami.Button = function(guiID, type) {
 		self.guidiv = document.createElement("div");
 		self.guidiv.style.width = '56px';
 		self.guidiv.style.height = '63px';
-		self.guidiv.style.cursor = 'pointer';		
+		self.guidiv.style.cursor = 'pointer';
 		self.guidiv.style.background = "url(buttons.png) no-repeat";
 		self.guidiv.style.backgroundPosition = background(1);
 		div.appendChild(self.guidiv);
-		
+
 		// margin auto doesn't work in IE quirks mode
 		// http://stackoverflow.com/questions/816343/why-will-this-div-img-not-center-in-ie8
-		// text-align is a hack to force it to work even if you forget the doctype.
-		self.guidiv.style.textAlign = 'center'; 
+		// text-align is a hack to force it to work even if you forget the
+		// doctype.
+		self.guidiv.style.textAlign = 'center';
 
 		self.meterDiv = document.createElement("div");
 		self.meterDiv.style.width = silhouetteWidth();
