@@ -98,7 +98,7 @@ function setupButtons() {
 function startRecording() {
 	recordButton.setActivity(0);
 	playButton.setEnabled(false);
-	recorder.startRecording("http://wami-recorder.appspot.com/",
+	recorder.startRecording("https://wami-recorder.appspot.com/",
 			"onRecordStart", "onRecordFinish", "onError");
 }
 
@@ -109,7 +109,7 @@ function stopRecording() {
 function startPlaying() {
 	playButton.setActivity(0);
 	recordButton.setEnabled(false);
-	recorder.startPlaying("http://wami-recorder.appspot.com/", "onPlayStart",
+	recorder.startPlaying("https://wami-recorder.appspot.com/", "onPlayStart",
 			"onPlayFinish", "onError");
 }
 
