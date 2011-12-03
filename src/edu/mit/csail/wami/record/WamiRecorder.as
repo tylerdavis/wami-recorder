@@ -108,7 +108,12 @@ package edu.mit.csail.wami.record
 				// This forces the security dialogue to pop up for debugging.
 				startListening();
 			}
-			
+
+			// I'm not sure if Flash can decide on a different sample rate 
+			// than the one you suggest, but just in case:
+			format.rate = WaveFormat.fromRoundedRate(mic.rate);
+			trace("Recording at rate: " + format.rate);
+
 			reallyStop();
 			audioPipe = createAudioPipe(url);
 
@@ -119,11 +124,6 @@ package edu.mit.csail.wami.record
 
 			this.listener = listener;
 			listener.started();
-			
-			// I'm not sure if Flash can decide on a different sample rate 
-			// than the one you suggest, but just in case:
-			format.rate = WaveFormat.fromRoundedRate(mic.rate);
-			trace("Recording at rate: " + format.rate);
 		}
 		
 		public function createAudioPipe(url:String):Pipe

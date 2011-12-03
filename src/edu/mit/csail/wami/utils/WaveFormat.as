@@ -40,7 +40,7 @@ package edu.mit.csail.wami.utils
 		public static var allRates:Boolean = false;
 
 		public var channels:uint = 1;
-		public var rate:uint = 11025;
+		public var rate:uint = 22050;
 		public var bits:uint = 16;
 		
 		// Little-endian is generally the way to go.
