@@ -31,18 +31,16 @@ package edu.mit.csail.wami.record
 	import edu.mit.csail.wami.utils.StateListener;
 	import edu.mit.csail.wami.utils.WaveFormat;
 	
-	import flash.events.EventDispatcher;
 	import flash.events.SampleDataEvent;
 	import flash.events.StatusEvent;
 	import flash.media.Microphone;
 	import flash.media.SoundCodec;
-	import flash.utils.ByteArray;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
 	public class WamiRecorder implements IRecorder
 	{
-		private static var CHUNK_DURATION_MILLIS:Number = 2000;
+		private static var CHUNK_DURATION_MILLIS:Number = 200;
 		
 		private var mic:Microphone = null;
 		private var stream:Boolean;
@@ -85,11 +83,12 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function startListening():void
-		{			
-			trace("Listening");
-			mic.rate = format.getRecordRate();
+		{
+			mic.rate = WaveFormat.toRoundedRate(format.rate);
+			mic.codec = SoundCodec.NELLYMOSER;  // Just to clarify 5, 8, 11, 16, 22 and 44 kHz
 			mic.setSilenceLevel(0, 10000);
 			mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
+			trace("Listening...");
 		}
 		
 		protected function onMicStatus(event:StatusEvent):void
@@ -120,6 +119,11 @@ package edu.mit.csail.wami.record
 
 			this.listener = listener;
 			listener.started();
+			
+			// I'm not sure if Flash can decide on a different sample rate 
+			// than the one you suggest, but just in case:
+			format.rate = WaveFormat.fromRoundedRate(mic.rate);
+			trace("Recording at rate: " + format.rate);
 		}
 		
 		public function createAudioPipe(url:String):Pipe

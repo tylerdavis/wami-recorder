@@ -27,6 +27,7 @@
 package edu.mit.csail.wami.client
 {	
 	import edu.mit.csail.wami.utils.External;
+	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -34,7 +35,6 @@ package edu.mit.csail.wami.client
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.utils.getQualifiedClassName;
-	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	/**
 	 * A class documents the possible parameters and sets a few defaults.
@@ -52,9 +52,13 @@ package edu.mit.csail.wami.client
 		// Send the audio using multiple HTTP Posts.
 		public var stream:Boolean = false;
 		
+		// Override to allow recording at 8000 and 16000 as well.
+		// Note that playback at these sample-rates will be sped up.
+		public var allrates:Boolean = false;
+		
 		// The URLs used in the debugging interface.
-		public var testRecordUrl:String = "http://wami-recorder.appspot.com/";
-		public var testPlayUrl:String = "http://wami-recorder.appspot.com/";
+		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
+		public var testPlayUrl:String = "https://wami-recorder.appspot.com/";
 		
 		// Callbacks for loading the client.
 		public var loadedCallback:String;
@@ -75,6 +79,10 @@ package edu.mit.csail.wami.client
 			if (params.paddingMillis != undefined) 
 			{
 				paddingMillis = int(params.paddingMillis);
+			}
+			
+			if (params.allrates != undefined) {
+				WaveFormat.allRates = params.allrates == "true";
 			}
 			
 			loadedCallback = params.loadedCallback;

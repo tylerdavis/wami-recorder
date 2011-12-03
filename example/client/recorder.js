@@ -57,7 +57,9 @@ function checkSecurity() {
 }
 
 function showFlash() {
-	recorder.style.visibility = "visible";
+	if (!supportsTransparency()) {
+		recorder.style.visibility = "visible";
+	}
 }
 
 function zoomError() {

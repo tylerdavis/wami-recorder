@@ -37,8 +37,10 @@ package edu.mit.csail.wami.utils
 	 */
 	public class WaveFormat
 	{
+		public static var allRates:Boolean = false;
+
 		public var channels:uint = 1;
-		public var rate:uint = 22050;
+		public var rate:uint = 11025;
 		public var bits:uint = 16;
 		
 		// Little-endian is generally the way to go.
@@ -50,8 +52,8 @@ package edu.mit.csail.wami.utils
 			validate();
 		}
 
-		// Why does flash.media.Microphone quasi-round sample rates in kHz??
-		public function getRecordRate():uint
+		// flash.media.Microphone quasi-rounds sample rates in kHz
+		public static function toRoundedRate(rate:uint):uint
 		{
 			if (rate == 5512)
 			{
@@ -59,12 +61,15 @@ package edu.mit.csail.wami.utils
 			}
 			else if (rate == 8000)
 			{
-				// throw new Error("8kHz could be supported, but it not easy to play back correctly.");
 				return 8;
 			}
 			else if (rate == 11025)
 			{
 				return 11;
+			}
+			else if (rate == 16000)
+			{
+				return 16;
 			}
 			else if (rate == 22050)
 			{
@@ -75,7 +80,38 @@ package edu.mit.csail.wami.utils
 				return 44;
 			}
 			
-			throw new Error("Unsupported sampling rate: " + rate);
+			throw new Error("Unsupported sample rate in Hz: " + rate);
+		}
+		
+		
+		public static function fromRoundedRate(rate:uint):uint
+		{
+			if (rate == 5)
+			{
+				return 5512;
+			}
+			else if (rate == 8)
+			{
+				return 8000;
+			}
+			else if (rate == 11)
+			{
+				return 11025;
+			}
+			else if (rate == 16)
+			{
+				return 16000;
+			}
+			else if (rate == 22)
+			{
+				return 22050;
+			}
+			else if (rate == 44)
+			{
+				return 44100;
+			}
+			
+			throw new Error("Unsupported sample rate rounded in kHz: " + rate);
 		}
 		
 		public function toByteArray(length:uint):ByteArray
@@ -151,16 +187,21 @@ package edu.mit.csail.wami.utils
 				throw new Error("Unsupported endian type: " + endian);
 			}
 			
+			var msg:String = "";
 			if (rate < 100) 
 			{
 				throw new Error("Rate should be in Hz");	
 			} 
-			else if (rate != 5512 && rate != 8000 && rate != 11025 && rate != 22050 && rate != 44100)
+			else if (rate != 5512 && rate != 8000 && rate != 11025 && rate != 16000 && rate != 22050 && rate != 44100)
 			{
-				var msg:String = "Sample rate of " + rate + " is not supported.";
+				msg = "Sample rate of " + rate + " is not supported.";
 				msg += " See flash.media.Microphone documentation."
 				throw new Error(msg);
-				// though maybe you could write resampling code in actionscript... maybe...
+			}
+			else if (!allRates && (rate == 8000 || rate == 16000)) {
+				msg = "8kHz and 16kHz are supported for recording but not playback.";
+				msg += "Enable all rates via a parameter passed into the Flash."
+				throw new Error(msg);
 			}
 		}
 		
