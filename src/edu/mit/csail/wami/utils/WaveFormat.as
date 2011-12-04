@@ -26,8 +26,6 @@
 */
 package edu.mit.csail.wami.utils
 {
-	import edu.mit.csail.wami.utils.WaveFormat;
-	
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
@@ -37,18 +35,25 @@ package edu.mit.csail.wami.utils
 	 */
 	public class WaveFormat
 	{
+		// Allow 8 and 16 kHz as well.
 		public static var allRates:Boolean = false;
 
-		public var channels:uint = 1;
-		public var rate:uint = 22050;
-		public var bits:uint = 16;
+		public static var HEADER_LENGTH:uint = 44;
+
+		public var channels:uint;
+		public var rate:uint;
+		public var bits:uint;
 		
 		// Little-endian is generally the way to go.
-		public var endian:String = Endian.LITTLE_ENDIAN;
-		public static var HEADER_LENGTH:uint = 44;
+		public var endian:String;
 		
-		public function WaveFormat()
+		public function WaveFormat(rate:uint, channels:uint, bits:uint, endian:String)
 		{
+			this.rate = rate;
+			this.channels = channels;
+			this.endian = endian;
+			this.bits = bits;
+			
 			validate();
 		}
 
@@ -141,12 +146,11 @@ package edu.mit.csail.wami.utils
 		
 		public static function toWaveFormat(header:ByteArray):WaveFormat
 		{
-			var format:WaveFormat = new WaveFormat();
-			
+			var endian:String = Endian.LITTLE_ENDIAN;
 			var chunkID:String = header.readUTFBytes(4);     
 			if (chunkID == "RIFX")
 			{
-				format.endian = Endian.BIG_ENDIAN;
+				endian = Endian.BIG_ENDIAN;
 			}
 			else if (chunkID != "RIFF")
 			{
@@ -158,16 +162,15 @@ package edu.mit.csail.wami.utils
 			var waveFmtStr:String = header.readUTFBytes(8);       // "WAVEfmt "
 			var subchunkSize:uint = header.readUnsignedInt();     // 16
 			var audioFormat:uint = header.readShort();            // 1
-			format.channels = header.readShort();
-			format.rate = header.readInt();
+			var channels:uint = header.readShort();
+			var rate:uint = header.readInt();
 			var bps:uint = header.readInt();
 			var bytesPerSample:uint = header.readShort();
-			format.bits = header.readShort();
+			var bits:uint = header.readShort();
 			var dataStr:String = header.readUTFBytes(4);          // "data"
 			var dataLength:uint = header.readInt();
 
-			format.validate();
-			return format;
+			return new WaveFormat(rate, channels, bits, endian);
 		}
 		
 		public function validate():void

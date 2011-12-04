@@ -26,15 +26,9 @@
 */
 package edu.mit.csail.wami.client
 {	
-	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.WaveFormat;
 	
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
-	import flash.utils.getQualifiedClassName;
+	import flash.utils.Endian;
 	
 	/**
 	 * A class documents the possible parameters and sets a few defaults.
@@ -47,7 +41,7 @@ package edu.mit.csail.wami.client
 
 		// Append this many milliseconds of audio before 
 		// and after calls to startRecording/stopRecording.
-		public var paddingMillis:uint = 200;
+		public var paddingMillis:uint = 250;
 
 		// Send the audio using multiple HTTP Posts.
 		public var stream:Boolean = false;
@@ -86,12 +80,14 @@ package edu.mit.csail.wami.client
 			}
 			
 			loadedCallback = params.loadedCallback;
-			
-			format = new WaveFormat();
+
+			var rate:uint = 11025;
 			if (params.rate != undefined) 
 			{
-				format.rate = uint(params.rate);
+				rate = uint(params.rate);
 			}
+			
+			format = new WaveFormat(rate, 1, 16, Endian.LITTLE_ENDIAN);
 		}
 	}
 }

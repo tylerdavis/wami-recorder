@@ -109,8 +109,8 @@ package edu.mit.csail.wami.record
 				startListening();
 			}
 
-			// I'm not sure if Flash can decide on a different sample rate 
-			// than the one you suggest, but just in case:
+			// Flash might be able to decide on a different 
+			// sample rate than the one you suggest.
 			format.rate = WaveFormat.fromRoundedRate(mic.rate);
 			trace("Recording at rate: " + format.rate);
 

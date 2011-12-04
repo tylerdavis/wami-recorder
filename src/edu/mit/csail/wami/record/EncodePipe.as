@@ -47,7 +47,7 @@ package edu.mit.csail.wami.record
 		{
 			var transcoded:ByteArray = new ByteArray();
 			transcoded.endian = format.endian;
-			while (bytes.bytesAvailable)
+			while (bytes.bytesAvailable >= 4)
 			{
 				var sample:int;
 				if (format.bits == 16)

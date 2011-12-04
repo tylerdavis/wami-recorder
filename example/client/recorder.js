@@ -111,6 +111,8 @@ function startRecording() {
 
 function stopRecording() {
 	recorder.stopRecording();
+	clearInterval(recordInterval);
+	recordButton.setEnabled(true);
 }
 
 function startPlaying() {
@@ -140,8 +142,6 @@ function onRecordStart() {
 }
 
 function onRecordFinish() {
-	clearInterval(recordInterval);
-	recordButton.setEnabled(true);
 	playButton.setEnabled(true);
 }
 
