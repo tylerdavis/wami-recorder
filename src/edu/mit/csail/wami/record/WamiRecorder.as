@@ -53,6 +53,12 @@ package edu.mit.csail.wami.record
 		private var stopInterval:uint;
 		private var paddingBufferSize:uint;
 		
+		// To determine if the amount of audio recorded matches up with 
+		// the length of time we've recorded (i.e. not dropping any frames)
+		private var handled:uint;
+		private var startTime:Date;
+		private var stopTime:Date;
+		
 		/**
 		 * The WAMI recorder actually listens constantly, keeping a buffer of the last
 		 * few milliseconds of audio.  Often people start talking before they click the
@@ -71,7 +77,7 @@ package edu.mit.csail.wami.record
 			
 			this.mic = mic;
 			mic.addEventListener(StatusEvent.STATUS, onMicStatus);
-			if (!mic.muted) 
+			if (!mic.muted && paddingMillis > 0) 
 			{
 				startListening();
 			}
@@ -80,6 +86,11 @@ package edu.mit.csail.wami.record
 			{
 				throw new Error("Desired duration is too small, even for streaming chunks: " + chunkSize);
 			}
+		}
+
+		private function stopListening():void
+		{
+			mic.removeEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 		}
 		
 		private function startListening():void
@@ -97,33 +108,39 @@ package edu.mit.csail.wami.record
 			if (event.code == "Microphone.Unmuted") 
 			{
 				startListening();
+			} else if (event.code == "Microphone.Muted") {
+				stopListening();
 			}
 		}
 		
 		public function start(url:String, listener:StateListener):void 
 		{
-			if (mic.muted)
+			if (mic.muted || paddingMillis > 0)
 			{
-				// Security should have been handled by now from Javascript.
-				// This forces the security dialogue to pop up for debugging.
+				// Forces security if mic is still muted in debugging mode.
 				startListening();
 			}
 
-			// Flash might be able to decide on a different 
-			// sample rate than the one you suggest.
+			// Flash might be able to decide on a different sample rate
+			// than the one you suggest depending on your audio card...
 			format.rate = WaveFormat.fromRoundedRate(mic.rate);
 			trace("Recording at rate: " + format.rate);
 
 			reallyStop();
 			audioPipe = createAudioPipe(url);
 
-			// Prepend a small amount of audio we've already recorded.
-			circularBuffer.close();
-			audioPipe.write(circularBuffer.getByteArray());
-			circularBuffer = new BytePipe(paddingBufferSize);
-
+			if (paddingMillis > 0) {
+				// Prepend a small amount of audio we've already recorded.
+				circularBuffer.close();
+				audioPipe.write(circularBuffer.getByteArray());
+				circularBuffer = new BytePipe(paddingBufferSize);
+			}
+			
 			this.listener = listener;
 			listener.started();
+
+			handled = 0;
+			startTime = new Date();
 		}
 		
 		public function createAudioPipe(url:String):Pipe
@@ -158,8 +175,9 @@ package edu.mit.csail.wami.record
 				if (audioPipe)
 				{
 					audioPipe.write(evt.data);
+					handled += evt.data.length / 4;
 				}
-				else
+				else if (paddingMillis > 0)
 				{
 					circularBuffer.write(evt.data);
 				}
@@ -187,7 +205,19 @@ package edu.mit.csail.wami.record
 			if (!audioPipe) return;
 			audioPipe.close();
 			audioPipe = null;
+			validateAudioLength();
 			listener.finished();
+		}
+		
+		private function validateAudioLength():void
+		{
+			stopTime = new Date();
+			var seconds:Number = ((stopTime.time - startTime.time + paddingMillis) / 1000.0);
+			var expectedSamples:uint = uint(seconds*format.rate);
+			trace("Expected Samples: " + expectedSamples + " Actual Samples: " + handled);
+			
+			startTime = null;
+			stopTime = null;
 		}
 	}
 }

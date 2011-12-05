@@ -43,9 +43,7 @@ package edu.mit.csail.wami.utils
 		public var channels:uint;
 		public var rate:uint;
 		public var bits:uint;
-		
-		// Little-endian is generally the way to go.
-		public var endian:String;
+		public var endian:String; // Little-endian is generally the way to go.
 		
 		public function WaveFormat(rate:uint, channels:uint, bits:uint, endian:String)
 		{

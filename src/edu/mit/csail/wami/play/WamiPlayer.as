@@ -138,6 +138,7 @@ package edu.mit.csail.wami.play
 			decoder.close();
 			
 			currentAudio = pipe.getByteArray();
+			trace("Playing audio with " + currentAudio.length/4 + " samples.");
 			
 			var sound:Sound = new Sound();
 			sound.addEventListener(SampleDataEvent.SAMPLE_DATA, handleSampleEvent);
