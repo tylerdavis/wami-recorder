@@ -89,7 +89,7 @@ package edu.mit.csail.wami.record
 		 * button, so we prepend paddingMillis milliseconds to the audio.
 		 */
 		public function listen(paddingMillis:uint):void {
-			if (!listening) {
+			if (!listening && !mic.muted) {
 				this.paddingMillis = paddingMillis;
 				mic.rate = WaveFormat.toRoundedRate(format.rate);
 				mic.codec = SoundCodec.NELLYMOSER;  // Just to clarify 5, 8, 11, 16, 22 and 44 kHz
@@ -97,9 +97,6 @@ package edu.mit.csail.wami.record
 				mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 				External.debug("Listening...");
 				listening = true;
-				if (mic.muted) {
-					listener.failed(new Error("Unable to get microphone permissions."));
-				}
 			}
 		}
 		
