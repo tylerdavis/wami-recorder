@@ -62,7 +62,6 @@ function loadedRecorder() {
 function checkSecurity() {
 	var settings = recorder.getSettings();
 	if (settings.microphone.granted) {
-		recorder.startListening();
 		hideFlash();
 		setupButtons();
 	} else {
