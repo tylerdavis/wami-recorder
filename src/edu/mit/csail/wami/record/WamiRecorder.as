@@ -124,11 +124,8 @@ package edu.mit.csail.wami.record
 		
 		public function start(url:String, listener:StateListener):void 
 		{
-			if (mic.muted || paddingMillis <= 0)
-			{
-				// Forces security if mic is still muted in debugging mode.
-				listen(this.paddingMillis);
-			}
+			// Forces security if mic is still muted in debugging mode.
+			listen(this.paddingMillis);
 
 			// Flash might be able to decide on a different sample rate
 			// than the one you suggest depending on your audio card...
