@@ -97,8 +97,6 @@ package edu.mit.csail.wami.record
 				mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 				External.debug("Listening...");
 				listening = true;
-				mic.setLoopBack(true);
-				mic.setUseEchoSuppression(true);
 				if (mic.muted) {
 					listener.failed(new Error("Unable to get microphone permissions."));
 				}
