@@ -156,8 +156,10 @@ function onError(e) {
 
 function onRecordStart() {
 	recordInterval = setInterval(function() {
-		var level = recorder.getRecordingActivity();
-		recordButton.setActivity(level);
+		if (recordButton.isActive()) {
+			var level = recorder.getRecordingActivity();
+			recordButton.setActivity(level);
+		}
 	}, 200);
 }
 
@@ -167,8 +169,10 @@ function onRecordFinish() {
 
 function onPlayStart() {
 	playInterval = setInterval(function() {
-		var level = recorder.getPlayingActivity();
-		playButton.setActivity(level);
+		if (playButton.isActive()) {
+			var level = recorder.getPlayingActivity();
+			playButton.setActivity(level);
+		}
 	}, 200);
 }
 
@@ -185,6 +189,7 @@ function onPlayFinish() {
 var Wami = window.Wami || {};
 Wami.Button = function(guiID, type) {
 	var self = this;
+	self.active = false;
 
 	// Get the background button image position
 	// Index: 1) normal 2) pressed 3) mouse-over
@@ -302,6 +307,10 @@ Wami.Button = function(guiID, type) {
 
 		self.active = false;
 		self.guidiv.onmousedown = mouseHandler;
+	}
+	
+	self.isActive = function() {
+		return self.active;
 	}
 
 	self.setActivity = function(level) {

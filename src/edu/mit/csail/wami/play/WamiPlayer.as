@@ -91,7 +91,7 @@ package edu.mit.csail.wami.play
 			}
 			
 			function progressHandler(event:ProgressEvent):void {
-				// External.debug("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
+				//External.debug("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
 			}
 			
 			function securityErrorHandler(event:SecurityErrorEvent):void {
@@ -111,6 +111,7 @@ package edu.mit.csail.wami.play
 		{
 			if (currentChannel != null) 
 			{
+				External.debug("Stop playing.");
 				currentChannel.removeEventListener(Event.SOUND_COMPLETE, stop);
 				currentChannel.stop();
 				listener.finished();
@@ -129,7 +130,8 @@ package edu.mit.csail.wami.play
 		
 		protected function play(wav:ByteArray):void
 		{
-			stop();  // Make sure we're stopped.
+			stop();  // Make sure we're stopped
+			
 			
 			var data:ByteArray = new ByteArray();
 			var decoder:Pipe = new DecodePipe();

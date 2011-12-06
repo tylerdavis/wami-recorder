@@ -89,7 +89,7 @@ package edu.mit.csail.wami.record
 		 * button, so we prepend paddingMillis milliseconds to the audio.
 		 */
 		public function listen(paddingMillis:uint):void {
-			if (!listening && !mic.muted) {
+			if (!listening) {
 				this.paddingMillis = paddingMillis;
 				mic.rate = WaveFormat.toRoundedRate(format.rate);
 				mic.codec = SoundCodec.NELLYMOSER;  // Just to clarify 5, 8, 11, 16, 22 and 44 kHz

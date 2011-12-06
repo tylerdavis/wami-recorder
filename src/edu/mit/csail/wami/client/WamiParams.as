@@ -46,11 +46,7 @@ package edu.mit.csail.wami.client
 
 		// Send the audio using multiple HTTP Posts.
 		public var stream:Boolean = false;
-		
-		// Override to allow recording at 8000 and 16000 as well.
-		// Note that playback at these sample-rates will be sped up.
-		public var allrates:Boolean = false;
-		
+				
 		// The URLs used in the debugging interface.
 		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
 		public var testPlayUrl:String = "https://wami-recorder.appspot.com/";
@@ -75,8 +71,10 @@ package edu.mit.csail.wami.client
 				External.debugToConsole = params.console == "true";
 			}
 			
+			// Override to allow recording at 8000 and 16000 as well.
+			// Note that playback at these sample-rates will be sped up.
 			if (params.allrates != undefined) {
-				WaveFormat.allRates = params.allrates == "true";
+				WaveFormat.allrates = params.allrates == "true";
 			}
 			
 			loadedCallback = params.loadedCallback;
