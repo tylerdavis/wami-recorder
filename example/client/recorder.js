@@ -52,16 +52,19 @@ function loadedRecorder() {
 		recorder.startListening();
 	};
 
+	// Note that the use of onfocus and onblur should probably be replaced
+	// with a more robust solution (e.g. jQuery's $(window).focus(...)
 	window.onblur = function() {
 		recorder.stopListening();
 	};
-	
+
 	checkSecurity();
 }
 
 function checkSecurity() {
 	var settings = recorder.getSettings();
 	if (settings.microphone.granted) {
+		recorder.startListening();
 		hideFlash();
 		setupButtons();
 	} else {
