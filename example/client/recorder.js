@@ -48,7 +48,6 @@ function loadedRecorder() {
 	// buffer a little audio before the users clicks, since sometimes
 	// people talk too soon. Without "listening", the audio would record
 	// exactly when startRecording() is called.
-	recorder.startListening();
 	window.onfocus = function() {
 		recorder.startListening();
 	};
@@ -63,6 +62,7 @@ function loadedRecorder() {
 function checkSecurity() {
 	var settings = recorder.getSettings();
 	if (settings.microphone.granted) {
+		recorder.startListening();
 		hideFlash();
 		setupButtons();
 	} else {
