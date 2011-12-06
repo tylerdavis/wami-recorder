@@ -81,7 +81,7 @@ package edu.mit.csail.wami.client
 			
 			loadedCallback = params.loadedCallback;
 
-			var rate:uint = 11025;
+			var rate:uint = 22050;
 			if (params.rate != undefined) 
 			{
 				rate = uint(params.rate);

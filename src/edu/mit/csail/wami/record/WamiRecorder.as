@@ -97,6 +97,11 @@ package edu.mit.csail.wami.record
 				mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 				External.debug("Listening...");
 				listening = true;
+				mic.setLoopBack(true);
+				mic.setUseEchoSuppression(true);
+				if (mic.muted) {
+					listener.failed(new Error("Unable to get microphone permissions."));
+				}
 			}
 		}
 		
@@ -226,7 +231,6 @@ package edu.mit.csail.wami.record
 			var seconds:Number = ((stopTime.time - startTime.time + paddingMillis) / 1000.0);
 			var expectedSamples:uint = uint(seconds*format.rate);
 			External.debug("Expected Samples: " + expectedSamples + " Actual Samples: " + handled);
-			
 			startTime = null;
 			stopTime = null;
 		}

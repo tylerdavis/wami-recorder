@@ -199,8 +199,8 @@ package edu.mit.csail.wami.utils
 				msg += " See flash.media.Microphone documentation."
 				throw new Error(msg);
 			}
-			else if (!allRates && (rate == 8000 || rate == 16000)) {
-				msg = "8kHz and 16kHz are supported for recording but not playback.";
+			else if (!allRates && (rate == 8000 || rate == 16000 || rate != 11025)) {
+				msg = "8kHz and 16kHz are supported for recording but not playback.  11kHz doesn't work in Ubuntu.";
 				msg += "Enable all rates via a parameter passed into the Flash."
 				throw new Error(msg);
 			}
