@@ -26,6 +26,7 @@
 */
 package edu.mit.csail.wami.record
 {	
+	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
 	
@@ -69,7 +70,7 @@ package edu.mit.csail.wami.record
 		override public function close():void 
 		{
 			buffer.position = 0;
-			trace("POST " + buffer.length + " bytes of type " + contentType);
+			External.debug("POST " + buffer.length + " bytes of type " + contentType);
 			
 			var loader:URLLoader = new URLLoader();
 			
@@ -85,7 +86,7 @@ package edu.mit.csail.wami.record
 			request.contentType = contentType;
 			request.method = URLRequestMethod.POST;
 			if (buffer.bytesAvailable == 0) {
-				trace("Note that flash does a GET request if bytes.length == 0");
+				External.debug("Note that flash does a GET request if bytes.length == 0");
 			}
 
 			try {
@@ -101,7 +102,7 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function completeHandler(event:Event):void {
-			trace("POST: completeHandler");
+			External.debug("POST: completeHandler");
 			var loader:URLLoader = URLLoader(event.target);
 			loader.removeEventListener(Event.COMPLETE, completeHandler);
 			loader.removeEventListener(Event.OPEN, openHandler);
@@ -113,7 +114,7 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function openHandler(event:Event):void {
-			trace("POST openHandler: " + event);
+			External.debug("POST openHandler: " + event);
 			setInterval(checkFinished, timeoutMillis);
 		}
 		
@@ -125,7 +126,7 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function progressHandler(event:ProgressEvent):void {
-			trace("POST progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
+			External.debug("POST progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
 		}
 		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {

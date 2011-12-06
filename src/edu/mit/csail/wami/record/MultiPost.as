@@ -26,20 +26,10 @@
 */
 package edu.mit.csail.wami.record
 {	
-	import edu.mit.csail.wami.utils.ErrorListener;
+	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
 	
-	import flash.errors.IOError;
-	import flash.events.Event;
-	import flash.events.HTTPStatusEvent;
-	import flash.events.IEventDispatcher;
-	import flash.events.IOErrorEvent;
-	import flash.events.ProgressEvent;
-	import flash.events.SecurityErrorEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
 	import flash.utils.ByteArray;
 	
 	public class MultiPost extends Pipe
@@ -74,7 +64,7 @@ package edu.mit.csail.wami.record
 		// A final POST containing a -1 signifies the end of the MultiPost stream.
 		override public function close():void
 		{
-			trace("Total multi-posted bytes: " + total);
+			External.debug("Total multi-posted bytes: " + total);
 			var arr:ByteArray = new ByteArray();
 			arr.writeInt(-1);
 			arr.position = 0;

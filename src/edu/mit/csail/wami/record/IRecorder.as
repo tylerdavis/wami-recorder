@@ -35,6 +35,14 @@ package edu.mit.csail.wami.record
 		function start(url:String, listener:StateListener):void; 
 		function stop():void;
 		
+		// It can be helpful to buffer a certain amount of audio to 
+		// prepend (and append) to the audio collected between start
+		// and stop.  This means, Flash needs to constantly listen.
+		// There are other times when it's obvious no recording will
+		// be done, and so listening is unnecesary.
+		function listen(paddingMillis:uint):void;
+		function unlisten():void;
+		
 		// Audio level (between 0 and 100)
 		function level():int; 
 	}

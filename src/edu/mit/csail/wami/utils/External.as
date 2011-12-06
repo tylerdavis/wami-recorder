@@ -33,6 +33,8 @@ package edu.mit.csail.wami.utils
 	 */
 	public class External
 	{
+		public static var debugToConsole:Boolean = false;
+		
 		public static function call(functionName:String, ... arguments):void
 		{
 			if (ExternalInterface.available && functionName) 
@@ -59,17 +61,27 @@ package edu.mit.csail.wami.utils
 			{
 				try
 				{
-					trace("External.addCallback: " + functionName);
+					External.debug("External.addCallback: " + functionName);
 					ExternalInterface.addCallback(functionName, closure);
 				}
 				catch (e:Error)
 				{
-					trace("Error calling external function: " + e.message);
+					External.debug("Error calling external function: " + e.message);
 				}
 			}
 			else
 			{
-				trace("No ExternalInterface - External.addCallback: " + functionName);
+				External.debug("No ExternalInterface - External.addCallback: " + functionName);
+			}
+		}
+		
+		public static function debug(msg:String):void {
+			if (debugToConsole) {
+				ExternalInterface.call("console.log", "FLASH: " + msg);
+			}
+			else 
+			{
+				trace(msg);
 			}
 		}
 	}

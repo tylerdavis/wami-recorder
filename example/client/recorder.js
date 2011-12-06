@@ -25,6 +25,10 @@ function setupRecorder() {
 		loadedCallback : "loadedRecorder"
 	}
 
+	if (console) {
+		flashVars.console = true;
+	}
+
 	var version = '10.0.0';
 	document.getElementById(wamiID).innerHTML = "WAMI requires Flash "
 			+ version + " or greater<br />https://get.adobe.com/flashplayer/";
@@ -39,6 +43,19 @@ function setupRecorder() {
 
 function loadedRecorder() {
 	recorder = document.getElementById(wamiID);
+
+	// Continually listening when the window is in focus allows us to
+	// buffer a little audio before the users clicks, since sometimes
+	// people talk too soon. Without "listening", the audio would record
+	// exactly when startRecording() is called.
+	window.onfocus = function() {
+		recorder.startListening();
+	};
+
+	window.onblur = function() {
+		recorder.stopListening();
+	};
+
 	checkSecurity();
 }
 

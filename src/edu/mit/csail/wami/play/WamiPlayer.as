@@ -27,6 +27,7 @@
 package edu.mit.csail.wami.play
 {
 	import edu.mit.csail.wami.utils.BytePipe;
+	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
 	
@@ -86,11 +87,11 @@ package edu.mit.csail.wami.play
 			}
 			
 			function openHandler(event:Event):void {
-				trace("openHandler: " + event);
+				External.debug("openHandler: " + event);
 			}
 			
 			function progressHandler(event:ProgressEvent):void {
-				// trace("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
+				// External.debug("progressHandler loaded:" + event.bytesLoaded + " total: " + event.bytesTotal);
 			}
 			
 			function securityErrorHandler(event:SecurityErrorEvent):void {
@@ -98,7 +99,7 @@ package edu.mit.csail.wami.play
 			}
 			
 			function httpStatusHandler(event:HTTPStatusEvent):void {
-				trace("httpStatusHandler: " + event);
+				External.debug("httpStatusHandler: " + event);
 			}
 			
 			function ioErrorHandler(event:IOErrorEvent):void {
@@ -138,7 +139,7 @@ package edu.mit.csail.wami.play
 			decoder.close();
 			
 			currentAudio = pipe.getByteArray();
-			trace("Playing audio with " + currentAudio.length/4 + " samples.");
+			External.debug("Playing audio with " + currentAudio.length/4 + " samples.");
 			
 			var sound:Sound = new Sound();
 			sound.addEventListener(SampleDataEvent.SAMPLE_DATA, handleSampleEvent);
@@ -156,7 +157,7 @@ package edu.mit.csail.wami.play
 			
 			var MAX_SAMPLES_PER_EVENT:uint = 4000;
 			var count:uint = 0;
-			// trace("Audio " + currentAudio.bytesAvailable +  " " + event.data.endian);
+			// External.debug("Audio " + currentAudio.bytesAvailable +  " " + event.data.endian);
 			while (currentAudio.bytesAvailable && count < MAX_SAMPLES_PER_EVENT) 
 			{
 				event.data.writeFloat(currentAudio.readFloat());

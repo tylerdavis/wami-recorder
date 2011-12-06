@@ -45,9 +45,11 @@ package edu.mit.csail.wami.client
 
 		function WamiAudio(mic:Microphone, params:WamiParams)
 		{
-			recorder = new WamiRecorder(mic, params.format, params.stream, params.paddingMillis);
+			recorder = new WamiRecorder(mic, params.format, params.stream);
 			player = new WamiPlayer();
 			
+			External.addCallback("startListening", startListening);
+			External.addCallback("stopListening", stopListening);
 			External.addCallback("startRecording", startRecording);
 			External.addCallback("stopRecording",stopRecording);
 			External.addCallback("getRecordingActivity", getRecordingActivity);
@@ -73,6 +75,16 @@ package edu.mit.csail.wami.client
 		internal function getPlayingActivity():int
 		{
 			return player.level();
+		}
+		
+		private function startListening(paddingMillis:uint = 200):void
+		{
+			recorder.listen(paddingMillis);
+		}
+		
+		private function stopListening():void
+		{
+			recorder.unlisten();
 		}
 		
 		internal function startRecording(url:String,

@@ -28,6 +28,7 @@ package edu.mit.csail.wami.play
 {
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.WaveFormat;
+	import edu.mit.csail.wami.utils.External;
 	
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
@@ -52,7 +53,7 @@ package edu.mit.csail.wami.play
 			{
 				bytes.position = 0;
 				format = WaveFormat.toWaveFormat(bytes);
-				trace(format.toString());
+				External.debug(format.toString());
 			}
 			
 			if (bytes.bytesAvailable)

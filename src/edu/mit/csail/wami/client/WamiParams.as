@@ -26,6 +26,7 @@
 */
 package edu.mit.csail.wami.client
 {	
+	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	import flash.utils.Endian;
@@ -70,9 +71,8 @@ package edu.mit.csail.wami.client
 				visible = params.visible == "true";
 			}
 			
-			if (params.paddingMillis != undefined) 
-			{
-				paddingMillis = int(params.paddingMillis);
+			if (params.console != undefined) {
+				External.debugToConsole = params.console == "true";
 			}
 			
 			if (params.allrates != undefined) {
