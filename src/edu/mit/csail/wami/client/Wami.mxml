@@ -10,6 +10,7 @@
 	-->
 	<fx:Script>
 		<![CDATA[			
+			import mx.core.UIComponent;
 			import edu.mit.csail.wami.utils.External;
 			
 			import mx.controls.Button;
@@ -69,8 +70,27 @@
 				var playButton:Button = new Button();
 				playButton.label = "Play";
 				addElement(playButton);
+				var uic:UIComponent = new UIComponent();
+				var video:Video = new Video();
+				uic.addChild(video);
+				addChild(uic);
 				playButton.addEventListener(MouseEvent.CLICK, function(evt:MouseEvent):void
 				{
+					function ns_onMetaData(item:Object):void {
+						trace("metaData");
+						// Resize video instance.
+						video.width = item.width;
+						video.height = item.height;
+						// Center video instance on Stage.
+						video.x = (stage.stageWidth - video.width) / 2;
+						video.y = (stage.stageHeight - video.height) / 2;
+					}
+					
+					function ns_onCuePoint(item:Object):void {
+						trace("cuePoint");
+						trace(item.name + "\t" + item.time);
+					}
+
 					audio.startPlaying(params.testPlayUrl);
 					label.setStyle("color", "#000500");
 					interval = setInterval(function():void
