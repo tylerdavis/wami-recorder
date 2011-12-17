@@ -26,6 +26,10 @@
 */
 package edu.mit.csail.wami.play
 {
+	import edu.mit.csail.wami.audio.AuContainer;
+	import edu.mit.csail.wami.audio.DecodePipe;
+	import edu.mit.csail.wami.audio.IAudioContainer;
+	import edu.mit.csail.wami.audio.WaveContainer;
 	import edu.mit.csail.wami.utils.BytePipe;
 	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
@@ -132,9 +136,12 @@ package edu.mit.csail.wami.play
 		{
 			stop();  // Make sure we're stopped
 			
-			
+			var containers:Vector.<IAudioContainer> = new Vector.<IAudioContainer>();
+			containers.push(new WaveContainer());
+			containers.push(new AuContainer());
+
 			var data:ByteArray = new ByteArray();
-			var decoder:Pipe = new DecodePipe();
+			var decoder:Pipe = new DecodePipe(containers);
 			var pipe:BytePipe = new BytePipe();
 			decoder.setSink(pipe);
 			decoder.write(wav);

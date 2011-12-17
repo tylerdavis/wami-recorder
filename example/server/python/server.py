@@ -17,6 +17,8 @@ class WamiHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         f = open("/tmp/test.wav", "wb")
+        # Note that python's HTTPServer doesn't support chunked transfer.
+        # Thus, it requires a content-length
         length = int(self.headers.getheader('content-length'))
         print "POST of length " + str(length)
         f.write(self.rfile.read(length))

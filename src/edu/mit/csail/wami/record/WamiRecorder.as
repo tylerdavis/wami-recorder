@@ -26,16 +26,21 @@
 */
 package edu.mit.csail.wami.record
 {
+	import edu.mit.csail.wami.audio.AuContainer;
+	import edu.mit.csail.wami.audio.AudioFormat;
+	import edu.mit.csail.wami.audio.EncodePipe;
+	import edu.mit.csail.wami.audio.IAudioContainer;
+	import edu.mit.csail.wami.audio.WaveContainer;
 	import edu.mit.csail.wami.utils.BytePipe;
 	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
-	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	import flash.events.SampleDataEvent;
 	import flash.events.StatusEvent;
 	import flash.media.Microphone;
 	import flash.media.SoundCodec;
+	import flash.utils.Endian;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
@@ -46,7 +51,7 @@ package edu.mit.csail.wami.record
 		private var mic:Microphone = null;
 		private var stream:Boolean;
 		private var chunkSize:uint;
-		private var format:WaveFormat;
+		private var format:AudioFormat;
 		private var audioPipe:Pipe;
 		private var listener:StateListener;
 
@@ -63,7 +68,7 @@ package edu.mit.csail.wami.record
 		private var startTime:Date;
 		private var stopTime:Date;
 
-		public function WamiRecorder(mic:Microphone, format:WaveFormat, s:Boolean)
+		public function WamiRecorder(mic:Microphone, format:AudioFormat, s:Boolean)
 		{
 			this.format = format;
 			stream = s;
@@ -91,7 +96,7 @@ package edu.mit.csail.wami.record
 		public function listen(paddingMillis:uint):void {
 			if (!listening) {
 				this.paddingMillis = paddingMillis;
-				mic.rate = WaveFormat.toRoundedRate(format.rate);
+				mic.rate = AudioFormat.toRoundedRate(format.rate);
 				mic.codec = SoundCodec.NELLYMOSER;  // Just to clarify 5, 8, 11, 16, 22 and 44 kHz
 				mic.setSilenceLevel(0, 10000);
 				mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
@@ -129,7 +134,7 @@ package edu.mit.csail.wami.record
 
 			// Flash might be able to decide on a different sample rate
 			// than the one you suggest depending on your audio card...
-			format.rate = WaveFormat.fromRoundedRate(mic.rate);
+			format.rate = AudioFormat.fromRoundedRate(mic.rate);
 			External.debug("Recording at rate: " + format.rate);
 
 			reallyStop();
@@ -152,22 +157,25 @@ package edu.mit.csail.wami.record
 		public function createAudioPipe(url:String):Pipe
 		{
 			var post:Pipe;
+			var container:IAudioContainer;
 			if (stream)
 			{
-				post = new MultiPost(url, "audio/x-wav.chunk-%s", 3*1000, listener);
+				post = new MultiPost(url, "audio/x-au; chunk/%s", 3*1000, listener);
+				format.endian = Endian.BIG_ENDIAN;
+				container = new AuContainer();
 			}
 			else
 			{
 				post = new SinglePost(url, "audio/x-wav", 30*1000, listener);
+				container = new WaveContainer();
 			}
 			
 			// Setup the audio pipes.  A transcoding pipe converts floats
 			// to shorts and passes them on to a chunking pipe, which spits
 			// out chunks to a pipe that possibly adds a WAVE header
 			// before passing the chunks on to a pipe that does HTTP posts.
-			var pipe:Pipe = new EncodePipe(format);
+			var pipe:Pipe = new EncodePipe(format, container);
 			pipe.setSink(new ChunkPipe(chunkSize))
-				.setSink(new WavePipe(format, stream))
 				.setSink(post);
 
 			return pipe;

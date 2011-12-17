@@ -26,8 +26,8 @@
 */
 package edu.mit.csail.wami.client
 {	
+	import edu.mit.csail.wami.audio.AudioFormat;
 	import edu.mit.csail.wami.utils.External;
-	import edu.mit.csail.wami.utils.WaveFormat;
 	
 	import flash.utils.Endian;
 	
@@ -48,12 +48,15 @@ package edu.mit.csail.wami.client
 		public var stream:Boolean = false;
 				
 		// The URLs used in the debugging interface.
-		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
-		public var testPlayUrl:String = "https://wami-recorder.appspot.com/";
+		//public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
+		//public var testPlayUrl:String = "https://wami-recorder.appspot.com/";
+		
+		public var testRecordUrl:String = "http://localhost/test/test.php";
+		public var testPlayUrl:String = "http://localhost/test/output.wav";
 		
 		// Callbacks for loading the client.
 		public var loadedCallback:String;
-		public var format:WaveFormat;
+		public var format:AudioFormat;
 	
 		public function WamiParams(params:Object):void
 		{
@@ -74,7 +77,7 @@ package edu.mit.csail.wami.client
 			// Override to allow recording at 8000 and 16000 as well.
 			// Note that playback at these sample-rates will be sped up.
 			if (params.allrates != undefined) {
-				WaveFormat.allrates = params.allrates == "true";
+				AudioFormat.allrates = params.allrates == "true";
 			}
 			
 			loadedCallback = params.loadedCallback;
@@ -85,7 +88,7 @@ package edu.mit.csail.wami.client
 				rate = uint(params.rate);
 			}
 			
-			format = new WaveFormat(rate, 1, 16, Endian.LITTLE_ENDIAN);
+			format = new AudioFormat(rate, 1, 16, Endian.LITTLE_ENDIAN);
 		}
 	}
 }
