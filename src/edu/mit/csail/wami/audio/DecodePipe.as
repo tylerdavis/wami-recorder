@@ -24,11 +24,12 @@
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package edu.mit.csail.wami.play
+package edu.mit.csail.wami.audio
 {
-	import edu.mit.csail.wami.utils.Pipe;
-	import edu.mit.csail.wami.utils.WaveFormat;
+	import edu.mit.csail.wami.audio.AudioFormat;
+	import edu.mit.csail.wami.audio.IAudioContainer;
 	import edu.mit.csail.wami.utils.External;
+	import edu.mit.csail.wami.utils.Pipe;
 	
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
@@ -38,25 +39,35 @@ package edu.mit.csail.wami.play
 	 */
 	public class DecodePipe extends Pipe
 	{
-		private var format:WaveFormat;
+		private var format:AudioFormat;
 		private var header:ByteArray = new ByteArray();
+		private var containers:Vector.<IAudioContainer>;
+		
+		public function DecodePipe(containers:Vector.<IAudioContainer>) {
+			if (containers.length == 0) {
+				throw new Error("Must have at least one container.");
+			}
+			this.containers = containers;
+		}
 		
 		override public function write(bytes:ByteArray):void
 		{
-			if (header.length < WaveFormat.HEADER_LENGTH)
+			if (format == null) 
 			{
-				var available:uint = Math.min(WaveFormat.HEADER_LENGTH - header.length, bytes.length);
-				bytes.readBytes(header, header.length, available);
-			}
-
-			if (format == null && header.length == WaveFormat.HEADER_LENGTH)
-			{
-				bytes.position = 0;
-				format = WaveFormat.toWaveFormat(bytes);
-				External.debug(format.toString());
+				// Try to get header by parsing from each container
+				bytes.readBytes(header, header.length, bytes.length);
+				for each (var container:IAudioContainer in containers) {
+					format = container.fromByteArray(header);
+					if (format != null) {
+						// Put the leftover bytes back
+						bytes = new ByteArray();
+						header.readBytes(bytes);  
+						break;
+					}
+				}
 			}
 			
-			if (bytes.bytesAvailable)
+			if (format != null && bytes.bytesAvailable)
 			{
 				bytes.endian = format.endian;
 				super.write(decode(bytes));
@@ -66,7 +77,6 @@ package edu.mit.csail.wami.play
 		private function decode(bytes:ByteArray):ByteArray
 		{
 			var decoded:ByteArray = new ByteArray();
-			decoded.endian = Endian.BIG_ENDIAN;
 			while (bytes.bytesAvailable)
 			{
 				var sample1:Number = getSample(bytes);

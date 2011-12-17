@@ -24,29 +24,39 @@
 * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-package edu.mit.csail.wami.record
+package edu.mit.csail.wami.audio
 {
+	import edu.mit.csail.wami.audio.AudioFormat;
+	import edu.mit.csail.wami.audio.IAudioContainer;
 	import edu.mit.csail.wami.utils.Pipe;
+	
 	import flash.utils.ByteArray;
-	import flash.utils.Endian;
-	import edu.mit.csail.wami.utils.WaveFormat;
 
 	/**
-	 * Convert float format to WAVE
+	 * Convert float format to raw audio accoring to the audio format passed in.
 	 */
 	public class EncodePipe extends Pipe
 	{
-		private var format:WaveFormat;
+		private var format:AudioFormat;
+		private var container:IAudioContainer;
 		
-		function EncodePipe(format:WaveFormat)
+		// Buffer if container requires length.  In this case,
+		// we cannot write the data to the sink until the very end.
+		private var buffer:ByteArray;          
+		private var headerWritten:Boolean;
+		
+		function EncodePipe(format:AudioFormat, container:IAudioContainer)
 		{
 			this.format = format;
+			this.container = container;
+			headerWritten = false;
 		}
 		
 		override public function write(bytes:ByteArray):void
 		{
 			var transcoded:ByteArray = new ByteArray();
 			transcoded.endian = format.endian;
+
 			while (bytes.bytesAvailable >= 4)
 			{
 				var sample:int;
@@ -74,7 +84,42 @@ package edu.mit.csail.wami.record
 				}
 			}
 			transcoded.position = 0;
-			super.write(transcoded);
+			handleEncoded(transcoded);
+		}
+
+		private function handleEncoded(bytes:ByteArray):void {
+			if (container == null) {
+				// No container, just stream it on
+				super.write(bytes);
+				return;
+			}
+			
+			if (container.isLengthRequired()) 
+			{
+				buffer.writeBytes(bytes, bytes.position, bytes.bytesAvailable);
+				return;
+			} 
+			
+			if (!headerWritten) 
+			{
+				var header:ByteArray = container.toByteArray(format);
+				super.write(header);
+				headerWritten = true;
+			}
+			super.write(bytes);
+		}
+		
+		override public function close():void
+		{
+			if (container != null && container.isLengthRequired())
+			{
+				// Write the whole WAV (including the header).
+				buffer.position = 0;
+				super.write(container.toByteArray(format, buffer.length));
+				super.write(buffer);
+			}
+			
+			super.close();
 		}
 	}
 }
