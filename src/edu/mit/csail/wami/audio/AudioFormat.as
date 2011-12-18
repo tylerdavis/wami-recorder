@@ -145,7 +145,7 @@ package edu.mit.csail.wami.audio
 			}
 			else if (!allrates && (rate == 8000 || rate == 16000 || rate == 11025)) {
 				msg = "8kHz and 16kHz are supported for recording but not playback.  11kHz doesn't work in Ubuntu.";
-				msg += "Enable all rates via a parameter passed into the Flash."
+				msg += "  Enable all rates via a parameter passed into the Flash."
 				throw new Error(msg);
 			}
 		}

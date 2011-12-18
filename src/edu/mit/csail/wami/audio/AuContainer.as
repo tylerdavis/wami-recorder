@@ -40,6 +40,7 @@ package edu.mit.csail.wami.audio
 	public class AuContainer implements IAudioContainer
 	{
 		private var header:ByteArray;
+		
 		public function isLengthRequired():Boolean {
 			return false;
 		}
@@ -151,7 +152,7 @@ package edu.mit.csail.wami.audio
 		
 		private function notAu(msg:String):AudioFormat
 		{
-			External.debug(msg);
+			External.debug("Not Au: " + msg);
 			header.position = 0;
 			return null;
 		}

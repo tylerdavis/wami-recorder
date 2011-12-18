@@ -132,19 +132,20 @@ package edu.mit.csail.wami.play
 			return 0;
 		}
 		
-		protected function play(wav:ByteArray):void
+		protected function play(audio:ByteArray):void
 		{
 			stop();  // Make sure we're stopped
 			
 			var containers:Vector.<IAudioContainer> = new Vector.<IAudioContainer>();
 			containers.push(new WaveContainer());
 			containers.push(new AuContainer());
-
+			
+			External.debug("Playing audio of " + audio.length + " bytes.");
 			var data:ByteArray = new ByteArray();
 			var decoder:Pipe = new DecodePipe(containers);
 			var pipe:BytePipe = new BytePipe();
 			decoder.setSink(pipe);
-			decoder.write(wav);
+			decoder.write(audio);
 			decoder.close();
 			
 			currentAudio = pipe.getByteArray();

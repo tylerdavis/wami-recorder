@@ -49,6 +49,7 @@ package edu.mit.csail.wami.audio
 		{
 			this.format = format;
 			this.container = container;
+			this.buffer = new ByteArray();
 			headerWritten = false;
 		}
 		

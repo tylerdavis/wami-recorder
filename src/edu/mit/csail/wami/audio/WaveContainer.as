@@ -72,7 +72,6 @@ package edu.mit.csail.wami.audio
 		public function fromByteArray(bytes:ByteArray):AudioFormat
 		{
 			this.header = bytes;
-
 			if (header.bytesAvailable < 44) {
 				var msg:String = "This header is not yet long enough ";
 				msg += "(need 44 bytes only have " + header.bytesAvailable + ")."
@@ -98,7 +97,10 @@ package edu.mit.csail.wami.audio
 				return notWav("RIFF header, but not a WAV.");
 			}
 			var subchunkSize:uint = header.readUnsignedInt();     // 16
-			var audioFormat:uint = header.readShort();                 // 1
+			var audioFormat:uint = header.readShort();            // 1
+			if (audioFormat != 1) {
+				return notWav("Currently we only support linear PCM");
+			}
 			var channels:uint = header.readShort();
 			var rate:uint = header.readInt();
 			var bps:uint = header.readInt();
@@ -124,7 +126,7 @@ package edu.mit.csail.wami.audio
 		 */
 		private function notWav(msg:String):AudioFormat
 		{
-			External.debug(msg);
+			External.debug("Not WAV: " + msg);
 			header.position = 0;
 			return null;
 		}

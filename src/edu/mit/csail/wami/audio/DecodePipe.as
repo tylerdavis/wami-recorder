@@ -61,7 +61,8 @@ package edu.mit.csail.wami.audio
 					if (format != null) {
 						// Put the leftover bytes back
 						bytes = new ByteArray();
-						header.readBytes(bytes);  
+						header.readBytes(bytes); 
+						External.debug("Format: " + format);
 						break;
 					}
 				}

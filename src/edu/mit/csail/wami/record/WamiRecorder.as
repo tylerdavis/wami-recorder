@@ -160,7 +160,9 @@ package edu.mit.csail.wami.record
 			var container:IAudioContainer;
 			if (stream)
 			{
-				post = new MultiPost(url, "audio/x-au; chunk/%s", 3*1000, listener);
+				// The chunk parameter is something I made up.  It would need
+				// to be handled on the server-side to piece all the chunks together.
+				post = new MultiPost(url, "audio/x-au; chunk=%s", 3*1000, listener);
 				format.endian = Endian.BIG_ENDIAN;
 				container = new AuContainer();
 			}
