@@ -52,11 +52,11 @@ package edu.mit.csail.wami.client
 			External.addCallback("stopListening", stopListening);
 			External.addCallback("startRecording", startRecording);
 			External.addCallback("stopRecording",stopRecording);
-			External.addCallback("getRecordingActivity", getRecordingActivity);
+			External.addCallback("getRecordingLevel", getRecordingLevel);
 			
 			External.addCallback("startPlaying",startPlaying);
 			External.addCallback("stopPlaying",stopPlaying);
-			External.addCallback("getPlayingActivity", getPlayingActivity);
+			External.addCallback("getPlayingLevel", getPlayingLevel);
 		}
 		
 		internal function startPlaying(url:String, 
@@ -72,7 +72,7 @@ package edu.mit.csail.wami.client
 			player.stop();
 		}
 		
-		internal function getPlayingActivity():int
+		internal function getPlayingLevel():int
 		{
 			return player.level();
 		}
@@ -100,7 +100,7 @@ package edu.mit.csail.wami.client
 			recorder.stop();
 		}
 		
-		internal function getRecordingActivity():int
+		internal function getRecordingLevel():int
 		{
 			return recorder.level();
 		}

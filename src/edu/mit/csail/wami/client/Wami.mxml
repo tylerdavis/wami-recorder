@@ -51,7 +51,7 @@
 					label.setStyle("color", "#500000");
 					interval = setInterval(function():void
 					{
-						label.text = "Activity: " + audio.getRecordingActivity();	
+						label.text = "Activity: " + audio.getRecordingLevel();	
 					}, 250);
 				});
 				
@@ -95,7 +95,7 @@
 					label.setStyle("color", "#000500");
 					interval = setInterval(function():void
 					{
-						label.text = "Activity: " + audio.getPlayingActivity();	
+						label.text = "Activity: " + audio.getPlayingLevel();	
 					}, 250);
 				});
 				

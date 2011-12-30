@@ -46,7 +46,7 @@ package edu.mit.csail.wami.client
 		public var paddingMillis:uint = 250;
 
 		// Send the audio using multiple HTTP Posts.
-		public var stream:Boolean = true;
+		public var stream:Boolean = false;
 				
 		// The URLs used in the debugging interface.
 		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
@@ -85,7 +85,7 @@ package edu.mit.csail.wami.client
 			{
 				rate = uint(params.rate);
 			}
-			
+			trace("STREAM!!!! " + stream);
 			format = new AudioFormat(rate, 1, 16, Endian.LITTLE_ENDIAN);
 		}
 	}
