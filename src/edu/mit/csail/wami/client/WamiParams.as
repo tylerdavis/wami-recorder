@@ -29,6 +29,7 @@ package edu.mit.csail.wami.client
 	import edu.mit.csail.wami.audio.AudioFormat;
 	import edu.mit.csail.wami.utils.External;
 	
+	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
 	/**
@@ -45,7 +46,7 @@ package edu.mit.csail.wami.client
 		public var paddingMillis:uint = 250;
 
 		// Send the audio using multiple HTTP Posts.
-		public var stream:Boolean = false;
+		public var stream:Boolean = true;
 				
 		// The URLs used in the debugging interface.
 		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";

@@ -36,8 +36,6 @@ package edu.mit.csail.wami.audio
 	 */
 	public class WaveContainer implements IAudioContainer
 	{
-		private var header:ByteArray;
-		
 		public function isLengthRequired():Boolean {
 			return true;
 		}
@@ -69,13 +67,12 @@ package edu.mit.csail.wami.audio
 			return header;
 		}	
 		
-		public function fromByteArray(bytes:ByteArray):AudioFormat
+		public function fromByteArray(header:ByteArray):AudioFormat
 		{
-			this.header = bytes;
 			if (header.bytesAvailable < 44) {
 				var msg:String = "This header is not yet long enough ";
 				msg += "(need 44 bytes only have " + header.bytesAvailable + ")."
-				return notWav(msg);
+				return notWav(header, msg);
 			}
 			
 			var endian:String = Endian.LITTLE_ENDIAN;
@@ -86,7 +83,7 @@ package edu.mit.csail.wami.audio
 			}
 			else if (chunkID != "RIFF")
 			{
-				return notWav("Does not look like a WAVE header: " + chunkID);
+				return notWav(header, "Does not look like a WAVE header: " + chunkID);
 			}
 			
 			header.endian = Endian.LITTLE_ENDIAN;                 // Header is little-endian 
@@ -94,12 +91,12 @@ package edu.mit.csail.wami.audio
 			var waveFmtStr:String = header.readUTFBytes(8);       // "WAVEfmt "
 			if (waveFmtStr != "WAVEfmt ") 
 			{
-				return notWav("RIFF header, but not a WAV.");
+				return notWav(header, "RIFF header, but not a WAV.");
 			}
 			var subchunkSize:uint = header.readUnsignedInt();     // 16
 			var audioFormat:uint = header.readShort();            // 1
 			if (audioFormat != 1) {
-				return notWav("Currently we only support linear PCM");
+				return notWav(header, "Currently we only support linear PCM");
 			}
 			var channels:uint = header.readShort();
 			var rate:uint = header.readInt();
@@ -115,7 +112,7 @@ package edu.mit.csail.wami.audio
 				format = new AudioFormat(rate, channels, bits, endian);
 			} catch (e:Error) 
 			{
-				return notWav(e.message);
+				return notWav(header, e.message);
 			}
 			return format;
 		}
@@ -124,7 +121,7 @@ package edu.mit.csail.wami.audio
 		 * Emit error message for debugging, reset the ByteArray and 
 		 * return null.
 		 */
-		private function notWav(msg:String):AudioFormat
+		private function notWav(header:ByteArray, msg:String):AudioFormat
 		{
 			External.debug("Not WAV: " + msg);
 			header.position = 0;

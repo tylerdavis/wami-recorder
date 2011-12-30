@@ -94,13 +94,13 @@ package edu.mit.csail.wami.audio
 				super.write(bytes);
 				return;
 			}
-			
+
 			if (container.isLengthRequired()) 
 			{
 				buffer.writeBytes(bytes, bytes.position, bytes.bytesAvailable);
 				return;
 			} 
-			
+
 			if (!headerWritten) 
 			{
 				var header:ByteArray = container.toByteArray(format);
@@ -114,7 +114,7 @@ package edu.mit.csail.wami.audio
 		{
 			if (container != null && container.isLengthRequired())
 			{
-				// Write the whole WAV (including the header).
+				// Write the audio (including the header).
 				buffer.position = 0;
 				super.write(container.toByteArray(format, buffer.length));
 				super.write(buffer);

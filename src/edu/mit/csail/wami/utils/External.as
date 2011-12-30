@@ -27,6 +27,7 @@
 package edu.mit.csail.wami.utils
 {
 	import flash.external.ExternalInterface;
+	import flash.utils.ByteArray;
 	
 	/**
 	 * Make external calls only if available.
@@ -75,7 +76,8 @@ package edu.mit.csail.wami.utils
 			}
 		}
 		
-		public static function debug(msg:String):void {
+		public static function debug(msg:String):void 
+		{
 			if (debugToConsole) {
 				ExternalInterface.call("console.log", "FLASH: " + msg);
 			}
@@ -83,6 +85,60 @@ package edu.mit.csail.wami.utils
 			{
 				trace(msg);
 			}
+		}
+		
+		public static function debugBytes(bytes:ByteArray):void 
+		{
+			debug(bytesToHex(bytes));
+		}
+		
+		public static function bytesToHex(bytes:ByteArray):String 
+		{
+			var position:int = bytes.position;
+			var count:int = 0; 
+			var str:String = "<";
+			while (bytes.bytesAvailable) 
+			{
+				if (count%4 == 0) 
+				{
+					str += " 0x";
+				}
+				var byte:uint = bytes.readUnsignedByte();
+				var nib1:uint = byte/16;
+				var nib2:uint = byte%16;
+				str += getHex(nib1) + getHex(nib2);
+				count++;
+			}
+			str += " >";
+			
+			// Reset position
+			bytes.position = position;
+			return str;
+		}
+		
+		private static function getHex(nibble:uint):String
+		{
+			switch(nibble) 
+			{
+				case 0: return '0';
+				case 1: return '1';
+				case 2: return '2';
+				case 3: return '3';
+				case 4: return '4';
+				case 5: return '5';
+				case 6: return '6';
+				case 7: return '7';
+				case 8: return '8';
+				case 9: return '9';
+				case 10: return 'a';
+				case 11: return 'b';
+				case 12: return 'c';
+				case 13: return 'd';
+				case 14: return 'e';	
+				case 15: return 'f';
+			}
+			
+			return "ERROR(" + nibble + ")";
 		}
 	}
 }

@@ -69,7 +69,7 @@ package edu.mit.csail.wami.record
 		private var stopTime:Date;
 
 		public function WamiRecorder(mic:Microphone, format:AudioFormat, s:Boolean)
-		{
+		{	
 			this.format = format;
 			stream = s;
 			var bytesPerSecond:uint = format.channels * (format.bits/8) * format.rate;

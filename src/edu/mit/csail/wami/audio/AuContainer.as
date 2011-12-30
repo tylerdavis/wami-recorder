@@ -39,15 +39,13 @@ package edu.mit.csail.wami.audio
 	 */
 	public class AuContainer implements IAudioContainer
 	{
-		private var header:ByteArray;
-		
 		public function isLengthRequired():Boolean {
 			return false;
 		}
 		
 		public function toByteArray(format:AudioFormat, length:int = -1):ByteArray
 		{
-			var dataLength:uint = 0xffffff;
+			var dataLength:uint = 0xffffffff;
 			if (length > -1) 
 			{
 				dataLength = length;
@@ -57,7 +55,6 @@ package edu.mit.csail.wami.audio
 			{
 				throw new Error("AU is a container for big endian data");
 			}
-			
 			// http://en.wikipedia.org/wiki/Au_file_format			
 			var header:ByteArray = new ByteArray();
 			header.endian = format.endian;
@@ -68,7 +65,7 @@ package edu.mit.csail.wami.audio
 			header.writeInt(format.rate);	
 			header.writeInt(format.channels);
 			header.position = 0;
-			trace("Writing AU header");
+			External.debugBytes(header);
 			return header;
 		}	
 		
@@ -108,20 +105,18 @@ package edu.mit.csail.wami.audio
 			throw new Error("Encoding not supported");
 		}
 		
-		public function fromByteArray(bytes:ByteArray):AudioFormat
+		public function fromByteArray(header:ByteArray):AudioFormat
 		{
-			this.header = bytes;
-			
 			if (header.bytesAvailable < 24)
 			{
-				return notAu("Header not yet long enough for Au");
+				return notAu(header, "Header not yet long enough for Au");
 			}
 			
 			header.endian = Endian.BIG_ENDIAN;     // Header is big-endian 
 			var magic:String = header.readUTFBytes(4);
 			if (magic != ".snd")
 			{
-				return notAu("Not an AU header: " + magic);
+				return notAu(header, "Not an AU header: " + magic);
 			}
 			
 			var dataOffset:uint = header.readInt();  
@@ -129,7 +124,7 @@ package edu.mit.csail.wami.audio
 			
 			if (header.bytesAvailable < dataOffset - 12)
 			{
-				return notAu("Header of length " + header.bytesAvailable + " not long enough yet to include offset of length " + dataOffset);
+				return notAu(header, "Header of length " + header.bytesAvailable + " not long enough yet to include offset of length " + dataOffset);
 			}
 			
 			var bits:uint = getBitsFromEncoding(header.readInt());
@@ -144,13 +139,13 @@ package edu.mit.csail.wami.audio
 				format = new AudioFormat(rate, channels, bits, Endian.BIG_ENDIAN);
 			} catch (e:Error) 
 			{
-				return notAu(e.message);
+				return notAu(header, e.message);
 			}
 			
 			return format;
 		}
 		
-		private function notAu(msg:String):AudioFormat
+		private function notAu(header:ByteArray, msg:String):AudioFormat
 		{
 			External.debug("Not Au: " + msg);
 			header.position = 0;
