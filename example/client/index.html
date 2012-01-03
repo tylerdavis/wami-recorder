@@ -109,7 +109,7 @@
     function onRecordStart() {
 	recordInterval = setInterval(function () {
 	    if (recordButton.isActive()) {
-		var level = Wami.getRecordingActivity();
+		var level = Wami.getRecordingLevel();
 		recordButton.setActivity(level);
 	    }
 	}, 200);
@@ -122,7 +122,7 @@
     function onPlayStart() {
 	playInterval = setInterval(function () {
 	    if (playButton.isActive()) {
-		var level = Wami.getPlayingActivity();
+		var level = Wami.getPlayingLevel();
 		playButton.setActivity(level);
 	    }
 	}, 200);
