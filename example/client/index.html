@@ -22,7 +22,6 @@
 
     function checkSecurity() {
 	var settings = Wami.getSettings();
-	console.log("CHECK SECURITY remembered - " + settings.microphone.remembered + " granted - " + settings.microphone.granted);
 	if (settings.microphone.granted) {
 	    listen();
 	    Wami.hide();
