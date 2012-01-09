@@ -29,6 +29,7 @@ package edu.mit.csail.wami.client
 	import edu.mit.csail.wami.audio.AudioFormat;
 	import edu.mit.csail.wami.utils.External;
 	
+	import flash.media.Microphone;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
@@ -38,6 +39,8 @@ package edu.mit.csail.wami.client
 	 */
 	public class WamiParams
 	{
+		private var mic:Microphone;
+		
 		// Show the debug interface.
 		public var visible:Boolean = true;
 
@@ -58,6 +61,11 @@ package edu.mit.csail.wami.client
 	
 		public function WamiParams(params:Object):void
 		{
+			mic = Microphone.getMicrophone();
+			
+			External.addCallback("setSettings", setSettings);
+			External.addCallback("getSettings", getSettings);
+			
 			if (params.stream != undefined)
 			{
 				stream = params.stream == "true";
@@ -85,8 +93,88 @@ package edu.mit.csail.wami.client
 			{
 				rate = uint(params.rate);
 			}
-			trace("STREAM!!!! " + stream);
 			format = new AudioFormat(rate, 1, 16, Endian.LITTLE_ENDIAN);
+		}
+		
+		public function getMicrophone():Microphone {
+			return mic;
+		}
+		
+		// Settings (including microphone security) are passed back here.
+		internal function getSettings():Object
+		{
+			var json:Object = {
+				"container" : (stream) ? "au" : "wav",
+				"encoding" : "pcm",
+				"signed" : true,
+				"sampleSize" : format.bits,
+				"bigEndian" : format.endian == Endian.BIG_ENDIAN,
+				"sampleRate" : format.rate,
+				"numChannels" : format.channels,
+				"interleaved" : true,
+				"microphone" : {
+					"granted" : (mic != null && !mic.muted)
+				}
+			};
+			
+			return json;
+		}
+		
+		internal function setSettings(json:Object):void
+		{	
+			if (json) 
+			{
+				// For now the type also specifies streaming or not.
+				if (json.container == "au")
+				{
+					stream = true;
+				}
+				else if (json.container == "wav") 
+				{
+					stream = false;
+				}
+
+				if (json.encoding) 
+				{
+					throw new Error("Encodings such as mu-law could be implemented.");	
+				}
+				
+				if (json.signed)
+				{
+					throw new Error("Not implemented yet.");	
+				}
+				
+				if (json.bigEndian) 
+				{
+					throw new Error("Automatically determined.");
+				}
+				
+				if (json.numChannels) 
+				{
+					format.channels = json.numChannels;	
+				}
+				
+				if (json.sampleSize) 
+				{
+					format.bits = json.sampleSize;	
+				}
+				
+				if (json.interleaved)
+				{
+					throw new Error("Always true.");
+				}
+				
+				if (json.microphone)
+				{
+					throw new Error("Only the user can change the microphone security settings.");	
+				}
+				
+				if (json.sampleRate) 
+				{
+					format.rate = json.sampleRate;
+				}
+				
+			}
 		}
 	}
 }

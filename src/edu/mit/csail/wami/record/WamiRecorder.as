@@ -43,23 +43,21 @@ package edu.mit.csail.wami.record
 	import flash.utils.Endian;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
+	import edu.mit.csail.wami.client.WamiParams;
 	
 	public class WamiRecorder implements IRecorder
 	{
 		private static var CHUNK_DURATION_MILLIS:Number = 200;
 		
 		private var mic:Microphone = null;
-		private var stream:Boolean;
-		private var chunkSize:uint;
-		private var format:AudioFormat;
+		private var params:WamiParams;
 		private var audioPipe:Pipe;
 		private var listener:StateListener;
 
 		// For adding some audio padding to start and stop.
 		private var circularBuffer:BytePipe;
 		private var stopInterval:uint;
-		private var paddingBufferSize:uint;
-		private var paddingMillis:uint = 0;
+		private var paddingMillis:uint = 0;  // initially 0, but listen changes it.
 		private var listening:Boolean = false;
 		
 		// To determine if the amount of audio recorded matches up with 
@@ -68,23 +66,16 @@ package edu.mit.csail.wami.record
 		private var startTime:Date;
 		private var stopTime:Date;
 
-		public function WamiRecorder(mic:Microphone, format:AudioFormat, s:Boolean)
+		public function WamiRecorder(mic:Microphone, params:WamiParams)
 		{	
-			this.format = format;
-			stream = s;
-			var bytesPerSecond:uint = format.channels * (format.bits/8) * format.rate;
-			chunkSize = stream ? bytesPerSecond * CHUNK_DURATION_MILLIS / 1000.0 : int.MAX_VALUE;
-			
-			this.paddingBufferSize = uint(bytesPerSecond*paddingMillis/1000.0);
-			this.circularBuffer = new BytePipe(paddingBufferSize);
-			this.paddingMillis = paddingMillis;
-			
+			this.params = params;
+			this.circularBuffer = new BytePipe(getPaddingBufferSize());
 			this.mic = mic;
 			mic.addEventListener(StatusEvent.STATUS, onMicStatus);
 			
-			if (chunkSize <= 0)
+			if (getChunkSize() <= 0)
 			{
-				throw new Error("Desired duration is too small, even for streaming chunks: " + chunkSize);
+				throw new Error("Desired duration is too small, even for streaming chunks: " + getChunkSize());
 			}
 		}
 		
@@ -96,7 +87,7 @@ package edu.mit.csail.wami.record
 		public function listen(paddingMillis:uint):void {
 			if (!listening) {
 				this.paddingMillis = paddingMillis;
-				mic.rate = AudioFormat.toRoundedRate(format.rate);
+				mic.rate = AudioFormat.toRoundedRate(params.format.rate);
 				mic.codec = SoundCodec.NELLYMOSER;  // Just to clarify 5, 8, 11, 16, 22 and 44 kHz
 				mic.setSilenceLevel(0, 10000);
 				mic.addEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
@@ -110,7 +101,7 @@ package edu.mit.csail.wami.record
 				mic.removeEventListener(SampleDataEvent.SAMPLE_DATA, sampleHandler);
 				listening = false;
 				if (paddingMillis > 0) {
-					circularBuffer = new BytePipe(paddingBufferSize);
+					circularBuffer = new BytePipe(getPaddingBufferSize());
 				}
 				External.debug("Unlistening.");
 			}
@@ -134,8 +125,8 @@ package edu.mit.csail.wami.record
 
 			// Flash might be able to decide on a different sample rate
 			// than the one you suggest depending on your audio card...
-			format.rate = AudioFormat.fromRoundedRate(mic.rate);
-			External.debug("Recording at rate: " + format.rate);
+			params.format.rate = AudioFormat.fromRoundedRate(mic.rate);
+			External.debug("Recording at rate: " + params.format.rate);
 
 			reallyStop();
 			audioPipe = createAudioPipe(url);
@@ -144,7 +135,7 @@ package edu.mit.csail.wami.record
 				// Prepend a small amount of audio we've already recorded.
 				circularBuffer.close();
 				audioPipe.write(circularBuffer.getByteArray());
-				circularBuffer = new BytePipe(paddingBufferSize);
+				circularBuffer = new BytePipe(getPaddingBufferSize());
 			}
 			
 			this.listener = listener;
@@ -158,12 +149,12 @@ package edu.mit.csail.wami.record
 		{
 			var post:Pipe;
 			var container:IAudioContainer;
-			if (stream)
+			if (params.stream)
 			{
 				// The chunk parameter is something I made up.  It would need
 				// to be handled on the server-side to piece all the chunks together.
-				post = new MultiPost(url, "audio/x-au; chunk=%s", 3*1000, listener);
-				format.endian = Endian.BIG_ENDIAN;
+				post = new MultiPost(url, "audio/basic; chunk=%s", 3*1000, listener);
+				params.format.endian = Endian.BIG_ENDIAN;
 				container = new AuContainer();
 			}
 			else
@@ -176,8 +167,8 @@ package edu.mit.csail.wami.record
 			// to shorts and passes them on to a chunking pipe, which spits
 			// out chunks to a pipe that possibly adds a WAVE header
 			// before passing the chunks on to a pipe that does HTTP posts.
-			var pipe:Pipe = new EncodePipe(format, container);
-			pipe.setSink(new ChunkPipe(chunkSize))
+			var pipe:Pipe = new EncodePipe(params.format, container);
+			pipe.setSink(new ChunkPipe(getChunkSize()))
 				.setSink(post);
 
 			return pipe;
@@ -234,10 +225,26 @@ package edu.mit.csail.wami.record
 		{
 			stopTime = new Date();
 			var seconds:Number = ((stopTime.time - startTime.time + paddingMillis) / 1000.0);
-			var expectedSamples:uint = uint(seconds*format.rate);
+			var expectedSamples:uint = uint(seconds*params.format.rate);
 			External.debug("Expected Samples: " + expectedSamples + " Actual Samples: " + handled);
 			startTime = null;
 			stopTime = null;
 		}
+		
+		private function getBytesPerSecond():uint 
+		{
+			return params.format.channels * (params.format.bits/8) * params.format.rate;
+		}
+		
+		private function getChunkSize():uint
+		{
+			return params.stream ? getBytesPerSecond() * CHUNK_DURATION_MILLIS / 1000.0 : int.MAX_VALUE;
+		}
+		
+		private function getPaddingBufferSize():uint
+		{
+			return uint(getBytesPerSecond()*params.paddingMillis/1000.0);
+		}
+		
 	}
 }

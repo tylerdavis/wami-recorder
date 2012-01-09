@@ -43,9 +43,9 @@ package edu.mit.csail.wami.client
 		private var checkSettingsIntervalID:int = 0;
 		private var checkSettingsInterval:int = 1000;
 
-		function WamiAudio(mic:Microphone, params:WamiParams)
+		function WamiAudio(params:WamiParams)
 		{
-			recorder = new WamiRecorder(mic, params.format, params.stream);
+			recorder = new WamiRecorder(params.getMicrophone(), params);
 			player = new WamiPlayer();
 			
 			External.addCallback("startListening", startListening);

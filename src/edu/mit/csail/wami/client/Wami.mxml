@@ -22,9 +22,8 @@
 				Security.allowInsecureDomain("*");
 				var params:WamiParams = new WamiParams(LoaderInfo(this.root.loaderInfo).parameters);
 				
-				var mic:Microphone = Microphone.getMicrophone();
-				var audio:WamiAudio = new WamiAudio(mic, params);
-				var settings:FlashSettings = new FlashSettings(stage, mic);
+				var audio:WamiAudio = new WamiAudio(params);
+				var settings:FlashSettings = new FlashSettings(stage);
 
 				if (params.visible) 
 				{
