@@ -35,7 +35,7 @@ Wami._callbacks = Wami._callbacks || {};
 // Wami.startListening()
 // Wami.stopListening()
 //
-Wami.setup = function(id, callback) {
+Wami.setup = function(callback, id, swfurl) {
 	// Assumes that swfobject.js is included if Wami.swfobject isn't
 	// already defined.
 	Wami.swfobject = Wami.swfobject || swfobject;
@@ -46,6 +46,14 @@ Wami.setup = function(id, callback) {
 		return;
 	}
 
+	if (typeof id == 'undefined') {
+		alert('Need an element ID to place the Flash object.');
+	}
+	
+	if (typeof swfurl == 'undefined') {
+		swfurl = "Wami.swf";
+	}
+	
 	function supportsTransparency() {
 		// Detecting the OS is a big no-no in Javascript programming, but
 		// I can't think of a better way to know if wmode is supported or
@@ -78,7 +86,7 @@ Wami.setup = function(id, callback) {
 				+ " or greater<br />https://get.adobe.com/flashplayer/";
 
 		// This is the minimum size due to the microphone security panel
-		Wami.swfobject.embedSWF("Wami.swf", id, 214, 137, version, null, flashVars,
+		Wami.swfobject.embedSWF(swfurl, id, 214, 137, version, null, flashVars,
 				params);
 
 		// Without this line, Firefox has a dotted outline of the flash

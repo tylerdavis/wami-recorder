@@ -15,9 +15,9 @@
     var recordInterval, playInterval;
 
     function setupRecorder() {
-	Wami.setup("wami", function () {
+	Wami.setup(function () {
 	    checkSecurity();
-	});
+	}, "wami");
     }
 
     function checkSecurity() {
