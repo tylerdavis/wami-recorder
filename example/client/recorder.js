@@ -68,7 +68,7 @@ Wami.setup = function(id, callback) {
 			params.wmode = "transparent";
 		}
 
-		if (typeof console === 'undefined') {
+		if (typeof console !== 'undefined') {
 			flashVars.console = true;
 		}
 
