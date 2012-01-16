@@ -52,7 +52,6 @@ package edu.mit.csail.wami.record
 		private var mic:Microphone = null;
 		private var params:WamiParams;
 		private var audioPipe:Pipe;
-		private var listener:StateListener;
 
 		// For adding some audio padding to start and stop.
 		private var circularBuffer:BytePipe;
@@ -65,6 +64,7 @@ package edu.mit.csail.wami.record
 		private var handled:uint;
 		private var startTime:Date;
 		private var stopTime:Date;
+		private var listener:StateListener;
 
 		public function WamiRecorder(mic:Microphone, params:WamiParams)
 		{	
@@ -119,7 +119,7 @@ package edu.mit.csail.wami.record
 		}
 		
 		public function start(url:String, listener:StateListener):void 
-		{
+		{	
 			// Forces security if mic is still muted in debugging mode.
 			listen(this.paddingMillis);
 
@@ -129,7 +129,7 @@ package edu.mit.csail.wami.record
 			External.debug("Recording at rate: " + params.format.rate);
 
 			reallyStop();
-			audioPipe = createAudioPipe(url);
+			audioPipe = createAudioPipe(url, listener);
 
 			if (paddingMillis > 0) {
 				// Prepend a small amount of audio we've already recorded.
@@ -138,15 +138,16 @@ package edu.mit.csail.wami.record
 				circularBuffer = new BytePipe(getPaddingBufferSize());
 			}
 			
-			this.listener = listener;
 			listener.started();
 
 			handled = 0;
 			startTime = new Date();
 		}
 		
-		public function createAudioPipe(url:String):Pipe
+		public function createAudioPipe(url:String, listener:StateListener):Pipe
 		{
+			this.listener = listener;
+			
 			var post:Pipe;
 			var container:IAudioContainer;
 			if (params.stream)

@@ -61,7 +61,9 @@ package edu.mit.csail.wami.audio
 			header.writeUTFBytes(".snd");
 			header.writeInt(24);               // Data offset
 			header.writeInt(dataLength);
-			header.writeInt(getEncodingFromBits(format));
+			
+			var bits:uint = getEncodingFromBits(format);
+			header.writeInt(bits);
 			header.writeInt(format.rate);	
 			header.writeInt(format.channels);
 			header.position = 0;
@@ -102,7 +104,7 @@ package edu.mit.csail.wami.audio
 				return 32;
 			}
 			
-			throw new Error("Encoding not supported");
+			throw new Error("Encoding not supported: " + encoding);
 		}
 		
 		public function fromByteArray(header:ByteArray):AudioFormat
@@ -112,25 +114,39 @@ package edu.mit.csail.wami.audio
 				return notAu(header, "Header not yet long enough for Au");
 			}
 			
+			var b:ByteArray = new ByteArray();
+			header.readBytes(b, 0, 24);
+			External.debugBytes(b);
+			header.position = 0;
+			
 			header.endian = Endian.BIG_ENDIAN;     // Header is big-endian 
+
 			var magic:String = header.readUTFBytes(4);
 			if (magic != ".snd")
 			{
-				return notAu(header, "Not an AU header: " + magic);
+				return notAu(header, "Not an AU header, first bytes should be .snd");
 			}
 			
 			var dataOffset:uint = header.readInt();  
-			var dataLength:uint = header.readInt();
-			
+			var dataLength:uint = header.readInt();  
+
 			if (header.bytesAvailable < dataOffset - 12)
 			{
 				return notAu(header, "Header of length " + header.bytesAvailable + " not long enough yet to include offset of length " + dataOffset);
 			}
 			
-			var bits:uint = getBitsFromEncoding(header.readInt());
+			var encoding:uint = header.readInt();
+
+			var bits:uint;
+			try {
+				bits = getBitsFromEncoding(encoding);
+			} catch (e:Error) {
+				return notAu(header, e.message);
+			}
+
 			var rate:uint = header.readInt();
 			var channels:uint = header.readInt();
-			
+
 			header.position = dataOffset;
 			
 			var format:AudioFormat;

@@ -71,7 +71,7 @@ package edu.mit.csail.wami.record
 		{
 			buffer.position = 0;
 			External.debug("POST " + buffer.length + " bytes of type " + contentType);
-			
+			buffer.position = 0;
 			var loader:URLLoader = new URLLoader();
 			
 			loader.addEventListener(Event.COMPLETE, completeHandler);

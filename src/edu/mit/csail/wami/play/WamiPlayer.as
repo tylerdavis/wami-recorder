@@ -139,9 +139,8 @@ package edu.mit.csail.wami.play
 			var containers:Vector.<IAudioContainer> = new Vector.<IAudioContainer>();
 			containers.push(new WaveContainer());
 			containers.push(new AuContainer());
-			
+
 			External.debug("Playing audio of " + audio.length + " bytes.");
-			var data:ByteArray = new ByteArray();
 			var decoder:Pipe = new DecodePipe(containers);
 			var pipe:BytePipe = new BytePipe();
 			decoder.setSink(pipe);

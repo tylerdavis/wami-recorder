@@ -3,6 +3,7 @@ var Wami = window.Wami || {};
 // A place to store non-anonymous callback functions.
 Wami._callbacks = Wami._callbacks || {};
 
+
 // This method ensures that a WAMI recorder is operational, and that
 // the following API is available in the Wami namespace. All functions
 // must be named (i.e. cannot be anonymous).
@@ -35,6 +36,10 @@ Wami._callbacks = Wami._callbacks || {};
 // Wami.stopListening()
 //
 Wami.setup = function(id, callback) {
+	// Assumes that swfobject.js is included if Wami.swfobject isn't
+	// already defined.
+	Wami.swfobject = Wami.swfobject || swfobject;
+	
 	if (Wami.startRecording) {
 		// Wami's already defined
 		callback();
@@ -63,7 +68,7 @@ Wami.setup = function(id, callback) {
 			params.wmode = "transparent";
 		}
 
-		if (console) {
+		if (typeof console === 'undefined') {
 			flashVars.console = true;
 		}
 
@@ -73,11 +78,11 @@ Wami.setup = function(id, callback) {
 				+ " or greater<br />https://get.adobe.com/flashplayer/";
 
 		// This is the minimum size due to the microphone security panel
-		swfobject.embedSWF("Wami.swf", id, 214, 137, version, null, flashVars,
+		Wami.swfobject.embedSWF("Wami.swf", id, 214, 137, version, null, flashVars,
 				params);
 
 		// Without this line, Firefox has a dotted outline of the flash
-		swfobject.createCSS("#" + id, "outline:none");
+		Wami.swfobject.createCSS("#" + id, "outline:none");
 	}
 
 	// To check if the microphone settings were 'remembered', we
@@ -96,7 +101,7 @@ Wami.setup = function(id, callback) {
 			var swf = document.getElementById(id);
 			Wami._remembered = swf.getSettings().microphone.granted;
 			var div = document.getElementById(id);
-			swfobject.removeSWF(id);
+			Wami.swfobject.removeSWF(id);
 			eval(finishedfn + "()");
 		};
 		

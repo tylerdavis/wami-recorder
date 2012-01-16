@@ -27,7 +27,7 @@
 package edu.mit.csail.wami.utils
 {
 	public interface StateListener
-	{
+	{	
 		function started():void;
 		function finished():void;
 		function failed(error:Error):void;
