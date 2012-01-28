@@ -26,6 +26,7 @@
 */
 package edu.mit.csail.wami.record
 {	
+	import edu.mit.csail.wami.utils.ErrorListener;
 	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
@@ -37,23 +38,26 @@ package edu.mit.csail.wami.record
 		private var url:String;
 		private var contentType:String = null;
 		private var partIndex:int = 0;
-		private var listener:StateListener;
 		private var timeoutMillis:int;
 		private var total:int = 0;
+		private var listener:ErrorListener = new ErrorListener();
 		
 		/**
 		 * Does of POST of the data passed in to every call to "write"
 		 */
-		public function MultiPost(url:String, type:String, timeoutMillis:int, listener:StateListener)
+		public function MultiPost(url:String, type:String, timeoutMillis:int)
 		{
 			this.url = url;
 			this.contentType = type;
-			this.listener = listener;
 			this.timeoutMillis = timeoutMillis;
 		}
 		
 		override public function write(bytes:ByteArray):void
 		{
+			if (listener.getError() != null) {
+				throw listener.getError();
+			}
+			
 			var type:String = contentType.replace("%s", partIndex++);
 			var post:Pipe = new SinglePost(url, type, timeoutMillis, listener);
 			post.write(bytes);

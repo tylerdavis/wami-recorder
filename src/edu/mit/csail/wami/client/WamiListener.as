@@ -26,8 +26,8 @@
 */
 package edu.mit.csail.wami.client
 {
-	import edu.mit.csail.wami.utils.StateListener;
 	import edu.mit.csail.wami.utils.External;
+	import edu.mit.csail.wami.utils.StateListener;
 
 	/**
 	 * Translates audio events into Javascript callbacks.

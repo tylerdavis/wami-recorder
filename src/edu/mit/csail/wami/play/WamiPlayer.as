@@ -118,6 +118,7 @@ package edu.mit.csail.wami.play
 				External.debug("Stop playing.");
 				currentChannel.removeEventListener(Event.SOUND_COMPLETE, stop);
 				currentChannel.stop();
+				External.debug("Listener finished.");
 				listener.finished();
 				currentChannel = null;
 			}

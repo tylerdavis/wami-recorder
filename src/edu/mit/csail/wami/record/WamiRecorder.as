@@ -31,6 +31,7 @@ package edu.mit.csail.wami.record
 	import edu.mit.csail.wami.audio.EncodePipe;
 	import edu.mit.csail.wami.audio.IAudioContainer;
 	import edu.mit.csail.wami.audio.WaveContainer;
+	import edu.mit.csail.wami.client.WamiParams;
 	import edu.mit.csail.wami.utils.BytePipe;
 	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
@@ -43,7 +44,6 @@ package edu.mit.csail.wami.record
 	import flash.utils.Endian;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
-	import edu.mit.csail.wami.client.WamiParams;
 	
 	public class WamiRecorder implements IRecorder
 	{
@@ -128,7 +128,7 @@ package edu.mit.csail.wami.record
 			params.format.rate = AudioFormat.fromRoundedRate(mic.rate);
 			External.debug("Recording at rate: " + params.format.rate);
 
-			reallyStop();
+			stop(true);
 			audioPipe = createAudioPipe(url, listener);
 
 			if (paddingMillis > 0) {
@@ -154,7 +154,7 @@ package edu.mit.csail.wami.record
 			{
 				// The chunk parameter is something I made up.  It would need
 				// to be handled on the server-side to piece all the chunks together.
-				post = new MultiPost(url, "audio/basic; chunk=%s", 3*1000, listener);
+				post = new MultiPost(url, "audio/basic; chunk=%s", 3*1000);
 				params.format.endian = Endian.BIG_ENDIAN;
 				container = new AuContainer();
 			}
@@ -192,13 +192,27 @@ package edu.mit.csail.wami.record
 			}
 			catch (error:Error)
 			{
+				audioPipe = null;
+				stop(true);
 				listener.failed(error);
 			}
 		}
 		
-		public function stop():void 
+		public function stop(force:Boolean = false):void 
 		{
-			stopInterval = setInterval(reallyStop, paddingMillis);
+			clearInterval(stopInterval);
+
+			if (force) 
+			{
+				reallyStop();
+			} 
+			else 
+			{
+				stopInterval = setInterval(function():void {
+					clearInterval(stopInterval);
+					reallyStop();
+				}, paddingMillis);
+			}
 		}
 		
 		public function level():int 
@@ -209,9 +223,14 @@ package edu.mit.csail.wami.record
 		
 		private function reallyStop():void
 		{
-			clearInterval(stopInterval);
 			if (!audioPipe) return;
-			audioPipe.close();
+
+			try {
+				audioPipe.close();
+			} catch(error:Error) {
+				listener.failed(error);
+			}
+			
 			audioPipe = null;
 			validateAudioLength();
 			listener.finished();

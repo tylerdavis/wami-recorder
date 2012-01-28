@@ -17,7 +17,7 @@
 *
 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND˙
+* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
 * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
 * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
@@ -26,17 +26,30 @@
 */
 package edu.mit.csail.wami.utils
 {
-	public class ErrorListener
+	public class ErrorListener implements StateListener
 	{
-		private var failedCallback:String;
+		private var error:Error = null;
 
-		function ErrorListener(callback:String) {
-			this.failedCallback = callback;
+		public function ErrorListener()
+		{ }
+		
+		public function started():void
+		{
+			// nothing to do
+		}
+		
+		public function finished():void
+		{
+			// nothing to do
 		}
 		
 		public function failed(error:Error):void
 		{
-			External.call(failedCallback, error.message);
+			this.error = error;
+		}
+		
+		public function getError():Error {
+			return error;
 		}
 	}
 }

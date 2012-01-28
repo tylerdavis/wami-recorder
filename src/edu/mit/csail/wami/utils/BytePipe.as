@@ -27,7 +27,6 @@
 package edu.mit.csail.wami.utils
 {
 	import flash.utils.ByteArray;
-	import flash.utils.Endian;
 
 	/**
 	 * Accumulates the written bytes into an array.  If a max number of bytes 

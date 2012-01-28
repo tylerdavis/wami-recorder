@@ -33,7 +33,7 @@ package edu.mit.csail.wami.record
 		// Start and stop recording.  Calling start while recording
 		// or calling stop when not recording should have no effect.
 		function start(url:String, listener:StateListener):void; 
-		function stop():void;
+		function stop(force:Boolean = false):void;
 		
 		// It can be helpful to buffer a certain amount of audio to 
 		// prepend (and append) to the audio collected between start

@@ -33,7 +33,6 @@ package edu.mit.csail.wami.client
 	import edu.mit.csail.wami.utils.External;
 	
 	import flash.display.MovieClip;
-	import flash.media.Microphone;
 
 	public class WamiAudio extends MovieClip
 	{
@@ -64,6 +63,7 @@ package edu.mit.csail.wami.client
 									   finishedCallback:String = null,
 									   failedCallback:String = null):void
 		{
+			recorder.stop(true);
 			player.start(url, new WamiListener(startedCallback, finishedCallback, failedCallback));
 		}
 		
