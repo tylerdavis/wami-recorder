@@ -138,7 +138,9 @@ package edu.mit.csail.wami.record
 		}
 		
 		private function httpStatusHandler(event:HTTPStatusEvent):void {
-			if (!finished && listener && event.status != 200) 
+			// Apparently the event.status can be zero in some environments where nothing is wrong:
+			// http://johncblandii.com/2008/04/flex-3-firefox-beta-3-returns-0-for-http-status-codes.html
+			if (!finished && listener && event.status != 200 && event.status != 0) 
 			{
 				listener.failed(new Error("HTTP status error: " + event.status));
 			}

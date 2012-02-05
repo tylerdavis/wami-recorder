@@ -3,12 +3,17 @@
 # python server.py
 # POST audio to   http://localhost:9000
 # GET audio from  http://localhost:9000
+#
+# A simple server to collect audio using python.
 
+import cgi
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 class WamiHandler(BaseHTTPRequestHandler):
+    dirname = "/tmp/"
+    
     def do_GET(self):
-        f = open("/tmp/test.wav")
+        f = open(self.get_name())
         self.send_response(200)
         self.send_header('content-type','audio/x-wav')
         self.end_headers()
@@ -16,13 +21,22 @@ class WamiHandler(BaseHTTPRequestHandler):
         f.close()
 
     def do_POST(self):
-        f = open("/tmp/test.wav", "wb")
+        f = open(self.get_name(), "wb")
         # Note that python's HTTPServer doesn't support chunked transfer.
-        # Thus, it requires a content-length
+        # Thus, it requires a content-length.
         length = int(self.headers.getheader('content-length'))
         print "POST of length " + str(length)
         f.write(self.rfile.read(length))
         f.close();
+
+    def get_name(self):
+        filename = 'output.wav';
+        qs = self.path.split('?',1);
+        if len(qs) == 2:
+            params = cgi.parse_qs(qs[1])
+            if params['name']:
+                filename = params['name'][0];
+        return WamiHandler.dirname + filename
 
 def main():
     try:

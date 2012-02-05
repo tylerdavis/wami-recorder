@@ -52,8 +52,8 @@ package edu.mit.csail.wami.client
 		public var stream:Boolean = false;
 				
 		// The URLs used in the debugging interface.
-		public var testRecordUrl:String = "https://wami-recorder.appspot.com/";
-		public var testPlayUrl:String = "https://wami-recorder.appspot.com/";
+		public var testRecordUrl:String = "http://localhost:9000?name=test.wav";
+		public var testPlayUrl:String = "http://localhost:9000?name=test.wav";
 
 		// Callbacks for loading the client.
 		public var loadedCallback:String;

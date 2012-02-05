@@ -17,7 +17,7 @@
 			import mx.core.UIComponent;
 			
 			private function applicationCompleteHandler(event:Event):void {
-				External.debug('WAMI Flash Version 1.0');
+				External.debug('WAMI Flash Version 1.0: ' + Security.sandboxType);
 				Security.allowInsecureDomain("*");
 				var params:WamiParams = new WamiParams(LoaderInfo(this.root.loaderInfo).parameters);
 				
