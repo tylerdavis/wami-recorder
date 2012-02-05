@@ -3,8 +3,11 @@ import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
-# The audio is captured and stored in a static global variable.
-# Session management could be implemented through URL parameters.
+# This is a very simple example of how to recieve and serve audio
+# using the Google App Engine (GAE).  The audio is captured and stored
+# in a static global variable.  Note that this means, you might not
+# even hear your own voice if someone recorded you before you had a
+# chance to play back.  This is just for illustrative purposes.
 class WamiHandler(webapp.RequestHandler):
     type = ""
     data = []

@@ -4,7 +4,9 @@
 # POST audio to   http://localhost:9000
 # GET audio from  http://localhost:9000
 #
-# A simple server to collect audio using python.
+# A simple server to collect audio using python.  To be more secure,
+# you might want to check the file names and place size restrictions
+# on the incoming data.
 
 import cgi
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
