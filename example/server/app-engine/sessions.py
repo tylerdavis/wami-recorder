@@ -13,12 +13,13 @@ class WamiHandler(webapp.RequestHandler):
     blob_key = ""
 
     def get(self):
+        blob_info = blobstore.BlobInfo.get(WamiHandler.blob_key)        
         blob_reader = blobstore.BlobReader(WamiHandler.blob_key)
         data = blob_reader.read()
-        logging.info("server-to-client: " + str(len(data)) + 
-                     " bytes at key " + str(WamiHandler.blob_key))
         self.response.headers['Content-Type'] = blob_info.content_type
         self.response.out.write(data);
+        logging.info("server-to-client: " + str(len(data)) + 
+                     " bytes at key " + str(WamiHandler.blob_key))
 
     def post(self):
         type = self.request.headers['Content-Type']
@@ -26,6 +27,7 @@ class WamiHandler(webapp.RequestHandler):
         logging.info(file_name)
         with files.open(file_name, 'a') as f:
             f.write(self.request.body)
+        f.close()
         files.finalize(file_name)
         
         WamiHandler.blob_key = files.blobstore.get_blob_key(file_name)
