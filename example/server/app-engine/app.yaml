@@ -4,11 +4,11 @@ runtime: python
 api_version: 1
 
 handlers:
-- url: /crossdomain.xml 
+- url: /crossdomain.xml
   mime_type: text/xml
-  static_files: crossdomain.xml 
+  static_files: crossdomain.xml
   upload: crossdomain.xml
 
 - url: .*
-  script: main.py
+  script: sessions.py
 

@@ -82,9 +82,9 @@ package edu.mit.csail.wami.record
 			loader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
 			
 			var request:URLRequest = new URLRequest(url);
-			request.data = buffer;
-			request.contentType = contentType;
 			request.method = URLRequestMethod.POST;
+			request.contentType = contentType;
+			request.data = buffer;
 			if (buffer.bytesAvailable == 0) {
 				External.debug("Note that flash does a GET request if bytes.length == 0");
 			}
