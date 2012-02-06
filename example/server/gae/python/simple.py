@@ -3,11 +3,12 @@ import logging
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
-# This is a very simple example of how to recieve and serve audio
-# using the Google App Engine (GAE).  The audio is captured and stored
-# in a static global variable.  Note that this means, you might not
-# even hear your own voice if someone recorded you before you had a
-# chance to play back.  This is just for illustrative purposes.
+# This is just the simplest possible working example that will allow
+# you to record to Google Apps Engine and play it back.  It does not
+# have session tracking.  It just stores temporary data in a global
+# variable.  You can use this to get you started with GAE without
+# worrying about data storage.
+
 class WamiHandler(webapp.RequestHandler):
     type = ""
     data = []

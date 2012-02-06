@@ -9,6 +9,10 @@ handlers:
   static_files: crossdomain.xml
   upload: crossdomain.xml
 
+- url: /list
+  script: list.py
+  login: admin
+
 - url: .*
   script: sessions.py
 
