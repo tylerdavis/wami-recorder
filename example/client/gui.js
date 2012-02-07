@@ -1,7 +1,8 @@
 var Wami = window.Wami || {};
-Wami.Button = function(guiID, type) {
+Wami.Button = function(guiID, type, url) {
 	var self = this;
 	self.active = false;
+	url = url ? url : "buttons.png";
 
 	// Get the background button image position
 	// Index: 1) normal 2) pressed 3) mouse-over
@@ -87,7 +88,7 @@ Wami.Button = function(guiID, type) {
 		self.guidiv.style.width = '56px';
 		self.guidiv.style.height = '63px';
 		self.guidiv.style.cursor = 'pointer';
-		self.guidiv.style.background = "url(buttons.png) no-repeat";
+		self.guidiv.style.background = "url(" + url + ") no-repeat";
 		self.guidiv.style.backgroundPosition = background(1);
 		div.appendChild(self.guidiv);
 
@@ -103,7 +104,7 @@ Wami.Button = function(guiID, type) {
 		self.meterDiv.style.margin = 'auto';
 		self.meterDiv.style.cursor = 'pointer';
 		self.meterDiv.style.position = 'relative';
-		self.meterDiv.style.background = "url(buttons.png) no-repeat";
+		self.meterDiv.style.background = "url(" + url + ") no-repeat";
 		self.meterDiv.style.backgroundPosition = meter(2);
 		self.guidiv.appendChild(self.meterDiv);
 
@@ -113,7 +114,7 @@ Wami.Button = function(guiID, type) {
 		self.coverDiv.style.margin = 'auto';
 		self.coverDiv.style.cursor = 'pointer';
 		self.coverDiv.style.position = 'relative';
-		self.coverDiv.style.background = "url(buttons.png) no-repeat";
+		self.coverDiv.style.background = "url(" + url + ") no-repeat";
 		self.coverDiv.style.backgroundPosition = meter(1);
 		self.meterDiv.appendChild(self.coverDiv);
 
