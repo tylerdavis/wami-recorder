@@ -4,11 +4,14 @@ Wami.RecordHIT = new function() {
 	var _maindiv;
 	var _baseurl;
 	var _prompts;
+	var _session_id;
 
 	var _prompt_index = 0;
 	var _prompts_recorded = 0;
 	var _heard_last = false;
-	var _session_id = createSessionID();
+
+	var _script = latestScript();
+	var path = _script.src.replace(/\/[^\/]*\.js$/, '/');
 
 	var css = ""
 			+ "div {"
@@ -106,11 +109,11 @@ Wami.RecordHIT = new function() {
 			+ "	background: -moz-linear-gradient(top, #027CFF, #2B3768);"
 			+ "	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#027CFF', endColorstr='#2B3768');"
 			+ "}" + "";
-	_maindiv = document.createElement("center");
-	document.body.appendChild(_maindiv);
 
 	this.create = function(prompts, baseurl) {
-
+		_maindiv = document.createElement("center");
+		_script.parentNode.insertBefore(_maindiv, _script);
+		_session_id = createSessionID();
 		if (!baseurl) {
 			baseurl = "";
 		} else if (baseurl.indexOf("/", baseurl.length - 1) == 1) {
@@ -130,6 +133,7 @@ Wami.RecordHIT = new function() {
 				});
 			});
 		});
+		return _session_id;
 	}
 
 	function injectCSS(css) {
@@ -175,6 +179,11 @@ Wami.RecordHIT = new function() {
 		var div = document.createElement("div");
 		div.setAttribute('id', id);
 		return div;
+	}
+
+	function latestScript() {
+		var scripts = document.getElementsByTagName('script');
+		return scripts[scripts.length - 1];
 	}
 
 	function embedWami() {
@@ -231,14 +240,14 @@ Wami.RecordHIT = new function() {
 	}
 
 	function getServerURL() {
-		return "https://wami-recorder.appspot.com/?name=" + _session_id + "-" + _prompt_index;
+		return "https://wami-recorder.appspot.com/?name=" + _session_id + "-"
+				+ _prompt_index;
 	}
-	
+
 	function startRecording() {
 		recordButton.setActivity(0);
 		playButton.setEnabled(false);
-		Wami.startRecording(getServerURL(),
-				"Wami.RecordHIT.onRecordStart",
+		Wami.startRecording(getServerURL(), "Wami.RecordHIT.onRecordStart",
 				"Wami.RecordHIT.onRecordFinish", "Wami.RecordHIT.onError");
 	}
 
@@ -251,9 +260,8 @@ Wami.RecordHIT = new function() {
 	function startPlaying() {
 		playButton.setActivity(0);
 		recordButton.setEnabled(false);
-		Wami.startPlaying(getServerURL(),
-				"Wami.RecordHIT.onPlayStart", "Wami.RecordHIT.onPlayFinish",
-				"Wami.RecordHIT.onError");
+		Wami.startPlaying(getServerURL(), "Wami.RecordHIT.onPlayStart",
+				"Wami.RecordHIT.onPlayFinish", "Wami.RecordHIT.onError");
 	}
 
 	function stopPlaying() {
@@ -325,8 +333,7 @@ Wami.RecordHIT = new function() {
 		hidden.id = hidden.name = "session_id";
 		hidden.value = _session_id;
 		_maindiv.appendChild(hidden);
-		
-		
+
 		var hitdiv = createDiv("hitwrapper");
 		_maindiv.appendChild(hitdiv);
 
@@ -443,7 +450,7 @@ Wami.RecordHIT = new function() {
 		if (playButton) {
 			playButton.setEnabled(enableReplay);
 		}
-		
+
 		showelement("ReadingDiv");
 		showelement("TaskDiv");
 		showelement("ButtonsDiv");
