@@ -1,0 +1,41 @@
+<html>
+<body>
+	<script>
+	    function append(line, spaces) {
+			var results = document.getElementById("results");
+			var str = "";
+			for (var i = 0; i < (spaces ? spaces : 0); ++i) {
+				str += "&nbsp;";
+			}
+			var spaces = document.createElement("span");
+			spaces.innerHTML = str;
+			results.appendChild(spaces);
+			results.appendChild(document.createTextNode(line));
+			results.appendChild(document.createElement('br'));
+	    }
+	    
+		function convert() {
+			var spaces = 14;
+			var txt = document.getElementById("txt").value;
+			append('var result = "" + ');
+			var lines = txt.split("\n");
+			for (i in lines) {
+				append('"' + lines[i] + '" + ', spaces);
+			}
+			append ('"";', spaces);
+		}
+	</script>
+	<div style="width: 600px">The sole purpose of this page is to
+		make it easy to convert a text file into a JavaScript variable. This
+		can be useful for injecting CSS or text into an HTML page via
+		JavaScript.</div>
+	<br />
+	<textarea id="txt" cols=80 rows=10></textarea>
+	<br />
+	<input type="button" value="Convert!" onclick="convert()" />
+	<br />
+	<br />
+	<br />
+	<div id="results"></div>
+</body>
+</html>
