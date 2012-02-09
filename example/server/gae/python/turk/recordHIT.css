@@ -1,9 +1,7 @@
 /**
- * The REAL css is actually injected via javascript.  This is just
- * to make it more readable.  There is a converter in this directory 
- * called multiline.html which turns it into a JS variable.
+ * This file must be a sibling of recordHIT because it's
+ * injected dynamically.
  */
-
 div {
 	font-family: Arial, Helvetica, sans-serif;
 }

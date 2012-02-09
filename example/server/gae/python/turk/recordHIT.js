@@ -11,104 +11,7 @@ Wami.RecordHIT = new function() {
 	var _heard_last = false;
 
 	var _script = latestScript();
-	var path = _script.src.replace(/\/[^\/]*\.js$/, '/');
-
-	var css = ""
-			+ "div {"
-			+ "	font-family: Arial, Helvetica, sans-serif;"
-			+ "}"
-			+ ""
-			+ "#PhraseDiv {"
-			+ "	width: 600px; "
-			+ "	background-color: rgb(208, 208, 208);"
-			+ "}"
-			+ ""
-			+ "#PrevTaskButton {"
-			+ "	margin-right: 20px;"
-			+ "}"
-			+ ""
-			+ "#NextTaskButton {"
-			+ "	margin-left: 20px;"
-			+ "}"
-			+ ""
-			+ "#InstructionsDiv {"
-			+ "	display: none; "
-			+ "	margin-bottom: 10px;"
-			+ "}"
-			+ ""
-			+ "#InstructionsDiv.one {"
-			+ "	color: green; "
-			+ "}"
-			+ ""
-			+ "#InstructionsDiv.two {"
-			+ "	color: blue; "
-			+ "}"
-			+ ""
-			+ "#TaskDiv {	"
-			+ "	font-size: 22px;"
-			+ "}"
-			+ ""
-			+ "#ReadingDiv {"
-			+ "	margin-bottom: 25px;"
-			+ "	font-size: 18px;"
-			+ "}"
-			+ ""
-			+ "#recordDiv {"
-			+ "	float: left; "
-			+ "	margin-left: 40px; "
-			+ "	margin-top: 50px"
-			+ "}"
-			+ ""
-			+ "#playDiv {"
-			+ "	float: right; "
-			+ "	margin-right: 40px; "
-			+ "	margin-top: 50px;"
-			+ "}"
-			+ ""
-			+ "#wrapper {"
-			+ "	height: 137px; "
-			+ "	width: 214px;"
-			+ "}"
-			+ ""
-			+ ".button {"
-			+ "	display: inline-block;"
-			+ "	outline: none;"
-			+ "	cursor: pointer;"
-			+ "	text-align: center;"
-			+ "	text-decoration: none;"
-			+ "	font: 16px/100% Arial, Helvetica, sans-serif;"
-			+ "	padding: .5em 2em .55em;"
-			+ "}"
-			+ ""
-			+ ".button.enabled:active {"
-			+ " position: relative;"
-			+ " top: 1px;"
-			+ "}"
-			+ ""
-			+ ".gray {"
-			+ "	color: #e9e9e9;"
-			+ "	border: solid 1px #555;"
-			+ "	background: #6e6e6e;"
-			+ "	background: -webkit-gradient(linear, left top, left bottom, from(#888), to(#575757));"
-			+ "	background: -moz-linear-gradient(top, #888, #575757);"
-			+ "	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#888888', endColorstr='#575757');"
-			+ "}"
-			+ ""
-			+ ".blue {"
-			+ "	color: #d9eef7;"
-			+ "	border: solid 1px #000654;"
-			+ "	background: #2B3768;"
-			+ "	background: -webkit-gradient(linear, left top, left bottom, from(#2B3768), to(#027CFF));"
-			+ "	background: -moz-linear-gradient(top, #2B3768, #027CFF);"
-			+ "	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2B3768', endColorstr='#027CFF');"
-			+ "}"
-			+ ""
-			+ ".blue:hover {"
-			+ "	background: #2B3768;"
-			+ "	background: -webkit-gradient(linear, left top, left bottom, from(#027CFF), to(#2B3768));"
-			+ "	background: -moz-linear-gradient(top, #027CFF, #2B3768);"
-			+ "	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#027CFF', endColorstr='#2B3768');"
-			+ "}" + "";
+	var _script_loc = _script.src.replace(/\/[^\/]*\.js$/, '/');
 
 	this.create = function(prompts, baseurl) {
 		_maindiv = document.createElement("center");
@@ -123,7 +26,7 @@ Wami.RecordHIT = new function() {
 		_prompts = prompts;
 		_baseurl = baseurl;
 
-		injectCSS(css);
+		injectCSS(_script_loc + "recordHIT.css")
 		var swfobjecturl = "http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js";
 		getScript(swfobjecturl, function() {
 			getScript(baseurl + "recorder.js", function() {
@@ -136,7 +39,8 @@ Wami.RecordHIT = new function() {
 		return _session_id;
 	}
 
-	function injectCSS(css) {
+	function injectCSS(url) {
+		var css = '@import url("' + url + '");';
 		var style = document.createElement('style');
 		var rules = document.createTextNode(css);
 
