@@ -106,10 +106,10 @@ Wami.RecordHIT = new function() {
 			+ "	background: -moz-linear-gradient(top, #027CFF, #2B3768);"
 			+ "	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#027CFF', endColorstr='#2B3768');"
 			+ "}" + "";
+	_maindiv = document.createElement("center");
+	document.body.appendChild(_maindiv);
 
 	this.create = function(prompts, baseurl) {
-		_maindiv = document.createElement("center");
-		document.body.appendChild(_maindiv);
 
 		if (!baseurl) {
 			baseurl = "";

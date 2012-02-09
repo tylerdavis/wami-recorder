@@ -105,7 +105,7 @@ package edu.mit.csail.wami.audio
 			if (format.bits == 8)
 			{
 				sample = bytes.readByte()/0x7f;
-			} 
+			}
 			else if (format.bits == 16)
 			{
 				sample = bytes.readShort()/0x7fff;
