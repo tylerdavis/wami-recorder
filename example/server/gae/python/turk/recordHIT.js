@@ -27,7 +27,7 @@ Wami.RecordHIT = new function() {
 		_baseurl = baseurl;
 
 		injectCSS(_script_loc + "recordHIT.css")
-		var swfobjecturl = "http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js";
+		var swfobjecturl = "https://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js";
 		getScript(swfobjecturl, function() {
 			getScript(baseurl + "recorder.js", function() {
 				getScript(baseurl + "gui.js", function() {

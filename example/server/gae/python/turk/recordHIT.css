@@ -6,6 +6,10 @@ div {
 	font-family: Arial, Helvetica, sans-serif;
 }
 
+#hitwrapper {
+	margin-top: -50px;
+}
+
 #PhraseDiv {
 	width: 600px; 
 	background-color: rgb(208, 208, 208);
@@ -44,13 +48,13 @@ div {
 #recordDiv {
 	float: left; 
 	margin-left: 40px; 
-	margin-top: 50px
+	margin-top: 20px
 }
 
 #playDiv {
 	float: right; 
 	margin-right: 40px; 
-	margin-top: 50px;
+	margin-top: 20px;
 }
 
 #wrapper {
