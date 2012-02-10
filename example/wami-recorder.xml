@@ -5,5 +5,5 @@
                author="Ian McGraw"
                author_email="wami-toolkit@csail.mit.edu"
                description="A Google gadget to exemplify the simplest wami-recorder use-case." />
-  <Content type="url" href="https://wami-recorder.googlecode.com/client/index.html"/>
+  <Content type="url" href="https://wami-recorder.appspot.com/client/index.html"/>
 </Module>
