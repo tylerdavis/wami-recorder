@@ -3,7 +3,11 @@ var Wami = window.Wami || {};
 // Upon a creation of a new Wami.GUI(options), we assume that a WAMI recorder
 // has been initialized.
 Wami.GUI = function(options) {
+        var RECORD_BUTTON = 1;
+	var PLAY_BUTTON = 2;
+
 	setOptions(options);
+	setupDOM();
 
 	var recordButton, playButton;
 	var recordInterval, playInterval;
@@ -33,6 +37,7 @@ Wami.GUI = function(options) {
 		var guidiv = createDiv(null,
 				"position: absolute; width: 214px; height: 137px;");
 		document.getElementById(options.id).appendChild(guidiv);
+
 		var rid = Wami.createID();
 		var recordDiv = createDiv(rid,
 				"position: absolute; left: 40px; top: 25px");
@@ -174,10 +179,8 @@ Wami.GUI = function(options) {
 		};
 	}
 
-	var RECORD_BUTTON = 1;
-	var PLAY_BUTTON = 2;
-	var Button = function(buttonid, type, url) {
-		var self = this;
+	function Button(buttonid, type, url) {
+	    var self = this;
 		self.active = false;
 		self.type = type;
 
@@ -343,7 +346,4 @@ Wami.GUI = function(options) {
 			}
 		}
 	}
-
-	setupDOM();
-
 }
