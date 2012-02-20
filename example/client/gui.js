@@ -124,10 +124,16 @@ Wami.GUI = function(options) {
 				recordButton.setActivity(level);
 			}
 		}, 200);
+		if (options.onRecordStart) {
+		    options.onRecordStart();
+		}
 	}
 
 	function onRecordFinish() {
 		playButton.setEnabled(true);
+		if (options.onRecordFinish) {
+		    options.onRecordFinish();
+		}
 	}
 
 	function onPlayStart() {
@@ -137,12 +143,18 @@ Wami.GUI = function(options) {
 				playButton.setActivity(level);
 			}
 		}, 200);
+		if (options.onPlayStart) {
+		    options.onPlayStart();
+		}
 	}
 
 	function onPlayFinish() {
 		clearInterval(playInterval);
 		recordButton.setEnabled(true);
 		playButton.setEnabled(true);
+		if (options.onPlayFinish) {
+		    options.onPlayFinish();
+		}
 	}
 
 	function listen() {
