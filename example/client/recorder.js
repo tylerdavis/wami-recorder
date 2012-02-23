@@ -246,7 +246,7 @@ Wami.setup = function(options) {
 
 // Returns a (very likely) unique string with of random letters and numbers
 Wami.createID = function() {
-	return "" + ("" + 1e10).replace(/[018]/g, function(a) {
+	return "wid" + ("" + 1e10).replace(/[018]/g, function(a) {
 		return (a ^ Math.random() * 16 >> a / 4).toString(16)
 	});
 }

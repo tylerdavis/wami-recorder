@@ -89,7 +89,7 @@ Wami.GUI = function(options) {
 
 		playButton.setActivity(0);
 		recordButton.setEnabled(false);
-		console.log(options.playUrl);
+
 		Wami.startPlaying(options.playUrl, Wami.nameCallback(onPlayStart), Wami
 				.nameCallback(onPlayFinish), Wami.nameCallback(onError));
 	}
