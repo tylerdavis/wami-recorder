@@ -26,54 +26,86 @@
 */
 package edu.mit.csail.wami.record
 {	
-	import edu.mit.csail.wami.utils.ErrorListener;
 	import edu.mit.csail.wami.utils.External;
 	import edu.mit.csail.wami.utils.Pipe;
 	import edu.mit.csail.wami.utils.StateListener;
 	
 	import flash.utils.ByteArray;
 	
-	public class MultiPost extends Pipe
+	public class MultiPost extends Pipe implements StateListener
 	{
 		private var url:String;
 		private var contentType:String = null;
 		private var partIndex:int = 0;
 		private var timeoutMillis:int;
-		private var total:int = 0;
-		private var listener:ErrorListener = new ErrorListener();
+		private var totalBytes:int = 0;
+		private var totalPostsMade:int = 0;
+		private var totalPostsDone:int = 0;
+		private var error:Error = null;
+		private var listener:StateListener;
 		
 		/**
 		 * Does of POST of the data passed in to every call to "write"
 		 */
-		public function MultiPost(url:String, type:String, timeoutMillis:int)
+		public function MultiPost(url:String, type:String, timeoutMillis:int, listener:StateListener)
 		{
 			this.url = url;
 			this.contentType = type;
 			this.timeoutMillis = timeoutMillis;
+			this.listener = listener;
 		}
 		
 		override public function write(bytes:ByteArray):void
 		{
-			if (listener.getError() != null) {
-				throw listener.getError();
+			if (getError() != null) {
+				throw getError();
 			}
 			
 			var type:String = contentType.replace("%s", partIndex++);
-			var post:Pipe = new SinglePost(url, type, timeoutMillis, listener);
+			var post:Pipe = new SinglePost(url, type, timeoutMillis, this);
 			post.write(bytes);
 			post.close();
-			total += bytes.length;
+			totalBytes += bytes.length;
+			totalPostsMade++;
 		}
 		
 		// A final POST containing a -1 signifies the end of the MultiPost stream.
 		override public function close():void
 		{
-			External.debug("Total multi-posted bytes: " + total);
+			External.debug("Total multi-posted bytes: " + totalBytes);
 			var arr:ByteArray = new ByteArray();
 			arr.writeInt(-1);
 			arr.position = 0;
 			write(arr);
 			super.close();
+		}
+		
+		public function started():void
+		{
+			// nothing to do
+		}
+		
+		public function finished():void
+		{
+			totalPostsDone++;
+			checkFinished();
+		}
+		
+		public function failed(error:Error):void
+		{
+			this.error = error;
+		}
+		
+		public function getError():Error 
+		{
+			return error;
+		}
+		
+		private function checkFinished():void 
+		{
+			if (totalPostsDone == totalPostsMade && super.isClosed()) {
+				listener.finished();
+			}
 		}
 	}		
 }

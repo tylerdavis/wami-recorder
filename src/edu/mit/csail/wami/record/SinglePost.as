@@ -110,6 +110,7 @@ package edu.mit.csail.wami.record
 			loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
 			loader.removeEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+			listener.finished();
 			finished = true;
 		}
 		

@@ -154,7 +154,7 @@ package edu.mit.csail.wami.record
 			{
 				// The chunk parameter is something I made up.  It would need
 				// to be handled on the server-side to piece all the chunks together.
-				post = new MultiPost(url, "audio/basic; chunk=%s", 3*1000);
+				post = new MultiPost(url, "audio/basic; chunk=%s", 3*1000, listener);
 				params.format.endian = Endian.BIG_ENDIAN;
 				container = new AuContainer();
 			}
@@ -233,7 +233,6 @@ package edu.mit.csail.wami.record
 			
 			audioPipe = null;
 			validateAudioLength();
-			listener.finished();
 			
 			if (this.paddingMillis == 0) {
 				// No need if we're not padding the audio
