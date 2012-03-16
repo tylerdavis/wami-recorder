@@ -124,6 +124,7 @@ Wami.setup = function(options) {
 		// Create a DIV for the SWF under _options.id
 
 		var container = document.createElement('div');
+		container.style.position = 'absolute';
 		_options.cid = Wami.createID();
 		container.setAttribute('id', _options.cid);
 
