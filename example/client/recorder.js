@@ -1,5 +1,26 @@
 var Wami = window.Wami || {};
 
+// Returns a (very likely) unique string with of random letters and numbers
+Wami.createID = function() {
+	return "wid" + ("" + 1e10).replace(/[018]/g, function(a) {
+		return (a ^ Math.random() * 16 >> a / 4).toString(16)
+	});
+}
+
+// Creates a named callback in WAMI and returns the name as a string.
+Wami.nameCallback = function(cb, cleanup) {
+	Wami._callbacks = Wami._callbacks || {};
+	var id = Wami.createID();
+	Wami._callbacks[id] = function() {
+		if (cleanup) {
+			Wami._callbacks[id] = null;
+		}
+		cb.apply(null, arguments);
+	};
+	var named = "Wami._callbacks['" + id + "']";
+	return named;
+}
+
 // This method ensures that a WAMI recorder is operational, and that
 // the following API is available in the Wami namespace. All functions
 // must be named (i.e. cannot be anonymous).
@@ -28,7 +49,6 @@ var Wami = window.Wami || {};
 // they click-to-talk.
 //
 // Wami.startListening()
-// Wami.stopListening()
 //
 Wami.setup = function(options) {
 	if (Wami.startRecording) {
@@ -49,7 +69,7 @@ Wami.setup = function(options) {
 
 	var _options;
 	setOptions(options);
-       	embedWamiSWF(_options.id, Wami.nameCallback(delegateWamiAPI));
+	embedWamiSWF(_options.id, Wami.nameCallback(delegateWamiAPI));
 
 	function supportsTransparency() {
 		// Detecting the OS is a big no-no in Javascript programming, but
@@ -102,9 +122,10 @@ Wami.setup = function(options) {
 		}
 
 		// Create a DIV for the SWF under _options.id
-		
+
 		var container = document.createElement('div');
-		container.style.cssText = "position: absolute;";
+		_options.cid = Wami.createID();
+		container.setAttribute('id', _options.cid);
 
 		var swfdiv = document.createElement('div');
 		var id = Wami.createID();
@@ -165,7 +186,7 @@ Wami.setup = function(options) {
 	// must actually embed an entirely new Wami client and check
 	// whether its microphone is granted. If it is, it was remembered.
 	function checkRemembered(finishedfn) {
-   	        var id = Wami.createID();
+		var id = Wami.createID();
 		var div = document.createElement('div');
 		div.style.top = '-999px';
 		div.style.left = '-999px';
@@ -210,9 +231,15 @@ Wami.setup = function(options) {
 		}
 
 		Wami.showSecurity = function(panel, startfn, finishedfn, failfn) {
+			// Flash must be on top for this.
+			var container = document.getElementById(_options.cid);
+
 			var augmentedfn = Wami.nameCallback(function() {
 				checkRemembered(finishedfn);
+				container.style.cssText = "position: absolute;";
 			});
+
+			container.style.cssText = "position: absolute; z-index: 99999";
 
 			recorder.showSecurity(panel, startfn, augmentedfn, failfn);
 		}
@@ -242,25 +269,4 @@ Wami.setup = function(options) {
 			checkSecurity();
 		}
 	}
-}
-
-// Returns a (very likely) unique string with of random letters and numbers
-Wami.createID = function() {
-	return "wid" + ("" + 1e10).replace(/[018]/g, function(a) {
-		return (a ^ Math.random() * 16 >> a / 4).toString(16)
-	});
-}
-
-// Creates a named callback in WAMI and returns the name as a string.
-Wami.nameCallback = function(cb, cleanup) {
-	Wami._callbacks = Wami._callbacks || {};
-	var id = Wami.createID();
-	Wami._callbacks[id] = function() {
-		if (cleanup) {
-			Wami._callbacks[id] = null;
-		}
-		cb.apply(null, arguments);
-	};
-	var named = "Wami._callbacks['" + id + "']";
-	return named;
 }

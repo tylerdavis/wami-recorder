@@ -3,7 +3,7 @@ var Wami = window.Wami || {};
 // Upon a creation of a new Wami.GUI(options), we assume that a WAMI recorder
 // has been initialized.
 Wami.GUI = function(options) {
-        var RECORD_BUTTON = 1;
+	var RECORD_BUTTON = 1;
 	var PLAY_BUTTON = 2;
 
 	setOptions(options);
@@ -130,14 +130,14 @@ Wami.GUI = function(options) {
 			}
 		}, 200);
 		if (options.onRecordStart) {
-		    options.onRecordStart();
+			options.onRecordStart();
 		}
 	}
 
 	function onRecordFinish() {
 		playButton.setEnabled(true);
 		if (options.onRecordFinish) {
-		    options.onRecordFinish();
+			options.onRecordFinish();
 		}
 	}
 
@@ -149,7 +149,7 @@ Wami.GUI = function(options) {
 			}
 		}, 200);
 		if (options.onPlayStart) {
-		    options.onPlayStart();
+			options.onPlayStart();
 		}
 	}
 
@@ -158,7 +158,7 @@ Wami.GUI = function(options) {
 		recordButton.setEnabled(true);
 		playButton.setEnabled(true);
 		if (options.onPlayFinish) {
-		    options.onPlayFinish();
+			options.onPlayFinish();
 		}
 	}
 
@@ -180,7 +180,7 @@ Wami.GUI = function(options) {
 	}
 
 	function Button(buttonid, type, url) {
-	    var self = this;
+		var self = this;
 		self.active = false;
 		self.type = type;
 
